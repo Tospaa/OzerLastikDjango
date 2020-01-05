@@ -1,0 +1,95 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Giriş Yap - Özer Lastik Dashboard</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
+    <meta name="description" content="Content shall be here.">
+    <meta name="msapplication-tap-highlight" content="no">
+    <!--
+    =========================================================
+    * ArchitectUI HTML Theme Dashboard - v1.0.0
+    =========================================================
+    * Product Page: https://dashboardpack.com
+    * Copyright 2019 DashboardPack (https://dashboardpack.com)
+    * Licensed under MIT (https://github.com/DashboardPack/architectui-html-theme-free/blob/master/LICENSE)
+    =========================================================
+    * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+    -->
+    <link href="{% static "dashboard/main.css" %}" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container app-theme-white body-tabs-shadow">
+        <div class="app-container">
+            <div class="h-100 bg-plum-plate bg-animation">
+                <div class="d-flex h-100 justify-content-center align-items-center">
+                    <div class="mx-auto col-md-8">
+                        <div class="mx-auto mb-3" style="height: 23px; width: 97px; background: url({% static "dashboard/images/logo.png" %});"></div>
+                        <div class="modal-dialog w-100 mx-auto">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <div class="h5 modal-title text-center">
+                                        <h4 class="mt-2" style="margin-bottom:1.5rem;">
+                                            <div style="opacity:0.6;">Hoş geldiniz,</div>
+                                            <span style="font-size:1.1rem;">Lütfen giriş yapınız</span>
+                                        </h4>
+                                    </div>
+                                    <form method="POST" class="">
+                                        {% csrf_token %}
+                                        <div class="form-row">
+                                            <div class="col-md-12">
+                                                <div class="position-relative form-group">
+                                                    <input name="{{ form.username.html_name }}" autofocus
+                                                        id="{{ form.username.id_for_label }}" placeholder="Kullanıcı adı" type="text"
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="position-relative form-group">
+                                                    <input name="{{ form.password.html_name }}"
+                                                        id="{{ form.password.id_for_label }}" placeholder="Şifre"
+                                                        type="password" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="position-relative form-check">
+                                            <input name="check" id="hatirla" type="checkbox"
+                                                class="form-check-input"><label for="hatirla"
+                                                class="form-check-label">Beni hatırla</label></div>
+
+                                        <div class="divider"></div>
+                                        <h6 class="mb-0">Hesabınız yok mu? <a href="javascript:void(0);"
+                                                class="text-primary">Yöneticiyle iletişime geçin.</a></h6>
+                                        <div class="modal-footer clearfix">
+                                            {% if form.errors %}
+                                            <div class="float-left">anan</div>
+                                            <br />
+                                            {% endif %}
+                                            <div class="float-left"><a href="javascript:void(0);"
+                                                    class="btn-lg btn btn-link">Şifremi Unuttum</a></div>
+                                            <div class="float-right">
+                                                <button type="submit" class="btn btn-primary btn-lg">Panele Giriş Yap</button>
+                                                <input type="hidden" name="next" value="{{ next }}">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center text-white opacity-8 mt-3">Özer Lastik &copy; Ocak 2020</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="{% static "dashboard/scripts/main.js" %}"></script>
+</body>
+
+</html>
