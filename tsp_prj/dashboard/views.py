@@ -7,4 +7,4 @@ def index(request):
     return render(request, 'dashboard/index.html', {'title': 'Özer Lastik Dashboard'})
 
 def contact(request):
-    return render(request, 'dashboard/contach.html')
+    return render(request, 'dashboard/contact.html')
