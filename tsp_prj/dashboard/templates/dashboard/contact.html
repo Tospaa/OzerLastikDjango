@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Language" content="en">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Giriş Yap - Özer Lastik Dashboard</title>
+    <title>Sistem Yöneticisi - Özer Lastik &amp; Ayakkabı</title>
     <meta name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
     <meta name="description" content="Content shall be here.">
@@ -28,61 +28,60 @@
 <body>
     <div class="app-container app-theme-white body-tabs-shadow">
         <div class="app-container">
-            <div class="h-100 bg-plum-plate bg-animation">
+            <div class="h-100 bg-happy-itmeo bg-animation">
                 <div class="d-flex h-100 justify-content-center align-items-center">
                     <div class="mx-auto col-md-8">
-                        <div class="mx-auto mb-3" style="height: 23px; width: 97px; background: url({% static "dashboard/images/logo.png" %});"></div>
-                        <div class="modal-dialog w-100 mx-auto">
-                            <div class="modal-content">
-                                <div class="modal-body">
-                                    <div class="h5 modal-title text-center">
-                                        <h4 class="mt-2" style="margin-bottom:1.5rem;">
-                                            <div style="opacity:0.6;">Hoş geldiniz,</div>
-                                            <span style="font-size:1.1rem;">Lütfen giriş yapınız</span>
-                                        </h4>
-                                    </div>
-                                    <form method="POST" class="">
-                                        {% csrf_token %}
-                                        <div class="form-row">
-                                            <div class="col-md-12">
-                                                <div class="position-relative form-group">
-                                                    <input name="{{ form.username.html_name }}" autofocus
-                                                        id="{{ form.username.id_for_label }}" placeholder="Kullanıcı adı" type="text"
-                                                        class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="position-relative form-group">
-                                                    <input name="{{ form.password.html_name }}"
-                                                        id="{{ form.password.id_for_label }}" placeholder="Şifre"
-                                                        type="password" class="form-control">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="position-relative form-check">
-                                            <input name="check" id="hatirla" type="checkbox"
-                                                class="form-check-input"><label for="hatirla"
-                                                class="form-check-label">Beni hatırla</label></div>
-
-                                        <div class="divider"></div>
-                                        <h6 class="mb-0">Hesabınız yok mu? <a href="{% url 'dashboard:contact' %}"
-                                                class="text-primary">Yöneticiyle iletişime geçin.</a></h6>
-                                        <div class="modal-footer clearfix">
-                                            {% if form.errors %}
-                                            <div class="float-left">anan</div>
-                                            <br />
-                                            {% endif %}
-                                            <div class="float-left"><a href="{% url 'dashboard:contact' %}"
-                                                    class="btn-lg btn btn-link">Şifremi Unuttum</a></div>
-                                            <div class="float-right">
-                                                <button type="submit" class="btn btn-primary btn-lg">Panele Giriş Yap</button>
-                                                <input type="hidden" name="next" value="{{ next }}">
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="modal-dialog modal-lg">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">Sistem Yöneticisi</h5>
+								</div>
+								<div class="modal-body">
+									<div class="widget-content p-0">
+										<div class="widget-content-outer">
+											<div class="widget-content-wrapper">
+												<div class="widget-content-left mr-3 mb-3 ml-3">
+													<img width="75" class="rounded-circle" src="{% static 'dashboard/images/avatars/sysdev.jpg' %}" />
+												</div>
+												<div class="widget-content-left">
+													<h5 class="card-title">Musa Ecer</h5>
+													<h6 class="card-subtitle">Makine Mühendisi - Deney &amp; Raporlama Sorumlusu</h6>
+												</div>
+											</div>
+										</div>
+									</div>
+									<ul class="list-group list-group-flush">
+										<li class="list-group-item">
+											<div class="widget-content p-0">
+												<div class="widget-content-outer">
+													<div class="widget-content-wrapper">
+														<div class="widget-content-left">
+															<div class="widget-heading"><a href="mailto:musaecer@gmail.com">musaecer@gmail.com</a></div>
+															<div class="widget-subheading">E-Mail</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</li>
+										<li class="list-group-item">
+											<div class="widget-content p-0">
+												<div class="widget-content-outer">
+													<div class="widget-content-wrapper">
+														<div class="widget-content-left">
+															<div class="widget-heading">+90 (551) 202 90 99</div>
+															<div class="widget-subheading">Telefon</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</li>
+									</ul>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" onclick="window.location.href = '{% url "dashboard:home" %}';">Anasayfaya Dön</button>
+								</div>
+							</div>
+						</div>
                         <div class="text-center text-white opacity-8 mt-3">Özer Lastik &copy; Ocak 2020</div>
                     </div>
                 </div>

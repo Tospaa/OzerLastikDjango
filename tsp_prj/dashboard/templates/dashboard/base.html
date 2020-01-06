@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Language" content="en">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>{% block title %}Boş Sayfa{% endblock %}</title>
+    <title>{% block title %}Boş Sayfa{% endblock %} - Özer Lastik &amp; Ayakkabı</title>
     <meta name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
     <meta name="description" content="Özer Lastik Dashboard">
@@ -99,12 +99,12 @@
                                         <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                                             class="p-0 btn">
                                             <img width="42" class="rounded-circle"
-                                                src="{% static "dashboard/images/avatars/4.jpg" %}" alt="">
+                                                src="{% static 'dashboard/images/avatars/'|add:user.username|add:'.jpg' %}" alt="">
                                             <i class="fa fa-angle-down ml-2 opacity-8"></i>
                                         </a>
                                         <div tabindex="-1" role="menu" aria-hidden="true"
                                             class="dropdown-menu dropdown-menu-right">
-                                            <button type="button" tabindex="0" class="dropdown-item">Hesap
+                                            <button type="button" tabindex="0" class="dropdown-item" onclick="window.location.href = '{% url "dashboard:account" %}';">Hesap
                                                 Ayarları</button>
                                             <div tabindex="-1" class="dropdown-divider"></div>
                                             <button type="button" tabindex="0" class="dropdown-item"
@@ -119,7 +119,7 @@
                                 </div>
                                 <div class="widget-content-left  ml-3 header-user-info">
                                     <div class="widget-heading">
-                                        {{ user.first_name }} {{ user.last_name }}
+                                        {{ user.get_full_name }}
                                     </div>
                                     <div class="widget-subheading">
                                         {{ user.profile.title }}
@@ -741,7 +741,7 @@
                         <div class="page-title-wrapper">
                             <div class="page-title-heading">
                                 <div class="page-title-icon">
-                                    <i class="pe-7s-monitor icon-gradient bg-mean-fruit">
+                                    <i class="{% block icon %}pe-7s-box2 icon-gradient bg-amy-crisp{% endblock %}">
                                     </i>
                                 </div>
                                 <div>{% block pagetitle %}Boş Sayfa{% endblock %}
@@ -834,6 +834,7 @@
         </div>
     </div>
     <script type="text/javascript" src="{% static "dashboard/scripts/main.js" %}"></script>
+	{% block extrascript %}{% endblock %}
 </body>
 
 </html>
