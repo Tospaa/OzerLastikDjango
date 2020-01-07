@@ -79,7 +79,7 @@
                         <div class="card mb-3 widget-chart widget-chart2 text-left w-100">
                             <div class="widget-chat-wrapper-outer">
                                 <div class="widget-chart-wrapper widget-chart-wrapper-lg opacity-10 m-0">
-                                    <canvas id="canvas"></canvas>
+                                    <canvas id="pasta-grafik"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -239,7 +239,7 @@
                 <div class="tab-pane fade active show" id="tab-eg-55">
                     <div class="widget-chart p-3">
                         <div style="height: 350px">
-                            <canvas id="line-chart-tsp"></canvas>
+                            <canvas id="cizgi-grafik"></canvas>
                         </div>
 						
                         <div class="widget-chart-content text-center mt-5">
@@ -662,7 +662,7 @@
 {% endblock %}
 {% block extrascript %}
 <script>
-var config = {
+var cizgi_config = {
 	type: 'line',
 	data: {
 		labels: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz'],
@@ -698,6 +698,7 @@ var config = {
 	},
 	options: {
 		responsive: true,
+		maintainAspectRatio: false,
 		title: {
 			display: true,
 			text: 'Bişeyin Grafiği'
@@ -729,9 +730,67 @@ var config = {
 	}
 };
 
-window.onload = function() {
-			var ctx = document.getElementById('line-chart-tsp').getContext('2d');
-			window.myLine = new Chart(ctx, config);
+var pasta_config = {
+			type: 'doughnut',
+			data: {
+				datasets: [{
+					data: [
+						14,
+						20,
+						28,
+						48,
+						32,
+					],
+					backgroundColor: [
+						window.chartColors.red,
+						window.chartColors.orange,
+						window.chartColors.yellow,
+						window.chartColors.green,
+						window.chartColors.blue,
+					],
+					label: 'Dataset 1'
+				}],
+				labels: [
+					'41 numara',
+					'42 numara',
+					'43 numara',
+					'44 numara',
+					'45 numara'
+				]
+			},
+			options: {
+				responsive: true,
+				legend: {
+					position: 'top',
+					display: ((screen.width < 450) ? false : true)
+				},
+				title: {
+					display: true,
+					text: 'Ayakkabı Numara / Stok'
+				},
+				animation: {
+					animateScale: true,
+					animateRotate: true
+				}
+			}
 		};
+
+window.onload = function() {
+			var cizgi_ctx = document.getElementById('cizgi-grafik').getContext('2d');
+			window.cizgiGrafik = new Chart(cizgi_ctx, cizgi_config);
+			var pasta_ctx = document.getElementById('pasta-grafik').getContext('2d');
+			window.pastaGrafik = new Chart(pasta_ctx, pasta_config);
+		};
+
+// Belli bi genişliğin altında Legend'i kapatmazsam Pasta Grafik çok küçük kalıyo.
+window.onresize = function(event) {
+    if (screen.width < 450 && pastaGrafik.legend.options.display) {
+		pastaGrafik.legend.options.display = false;
+		pastaGrafik.update();
+	} else if (screen.width > 450 && !(pastaGrafik.legend.options.display)) {
+		pastaGrafik.legend.options.display = true;
+		pastaGrafik.update();
+	}
+};
 </script>
 {% endblock %}
