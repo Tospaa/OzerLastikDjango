@@ -62,9 +62,9 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="position-relative form-group">
-                                                    <input name="{{ form.password.html_name }}"
-                                                        id="{{ form.password.id_for_label }}" placeholder="Şifre"
-                                                        type="password" class="form-control" required>
+													<input name="{{ form.password.html_name }}"
+														id="{{ form.password.id_for_label }}" placeholder="Şifre"
+														type="password" class="form-control" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -77,7 +77,11 @@
                                                     class="btn-lg btn btn-link">Şifremi Unuttum</a></div>
                                             <div class="float-right">
                                                 <button type="submit" class="btn btn-primary btn-lg">Panele Giriş Yap</button>
+												{% if next %}
                                                 <input type="hidden" name="next" value="{{ next }}">
+												{% else %}
+												<input type="hidden" name="next" value="{% url 'dashboard:home' %}">
+												{% endif %}
                                             </div>
                                         </div>
                                     </form>
