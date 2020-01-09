@@ -4,11 +4,11 @@
 
 <head>
     <meta charset="utf-8">
-	{% if user.is_authenticated %}
-	<meta http-equiv="refresh" content="0; URL={% url 'dashboard:home' %}" />
+    {% if user.is_authenticated %}
+    <meta http-equiv="refresh" content="0; URL={% url 'dashboard:home' %}" />
 </head>
 </html>
-	{% else %}
+    {% else %}
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Language" content="en">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -46,9 +46,9 @@
                                             <span style="font-size:1.1rem;">Lütfen giriş yapınız</span>
                                         </h4>
                                     </div>
-									{% if form.errors %}
-									<h5 class="mb-0" style="font-size: 14px;font-weight: 700;display: block;padding: 10px 12px;margin: 0 0 10px 0;color: #ba2121;border: 1px solid #ba2121;border-radius: 4px;background-color: #fff;background-position: 5px 12px;">Yanlış kullanıcı adı / şifre girdiniz. Lütfen girdiğiniz verilerin doğruluğundan emin olun.</h5>
-									<br />
+                                    {% if form.errors %}
+                                    <h5 class="mb-0" style="font-size: 14px;font-weight: 700;display: block;padding: 10px 12px;margin: 0 0 10px 0;color: #ba2121;border: 1px solid #ba2121;border-radius: 4px;background-color: #fff;background-position: 5px 12px;">Yanlış kullanıcı adı / şifre girdiniz. Lütfen girdiğiniz verilerin doğruluğundan emin olun.</h5>
+                                    <br />
                                     {% endif %}
                                     <form method="POST" class="">
                                         {% csrf_token %}
@@ -62,13 +62,13 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="position-relative form-group">
-													<input name="{{ form.password.html_name }}"
-														id="{{ form.password.id_for_label }}" placeholder="Şifre"
-														type="password" class="form-control" required>
+                                                    <input name="{{ form.password.html_name }}"
+                                                        id="{{ form.password.id_for_label }}" placeholder="Şifre"
+                                                        type="password" class="form-control" required>
                                                 </div>
                                             </div>
                                         </div>
-										<div class="divider"></div>
+                                        <div class="divider"></div>
                                         <h6 class="mb-0">Hesabınız yok mu? <a href="{% url 'dashboard:contact' %}"
                                                 class="text-primary">Yöneticiyle iletişime geçin.</a></h6>
                                         <div class="modal-footer clearfix">
@@ -77,11 +77,11 @@
                                                     class="btn-lg btn btn-link">Şifremi Unuttum</a></div>
                                             <div class="float-right">
                                                 <button type="submit" class="btn btn-primary btn-lg">Panele Giriş Yap</button>
-												{% if next %}
+                                                {% if next %}
                                                 <input type="hidden" name="next" value="{{ next }}">
-												{% else %}
-												<input type="hidden" name="next" value="{% url 'dashboard:home' %}">
-												{% endif %}
+                                                {% else %}
+                                                <input type="hidden" name="next" value="{% url 'dashboard:home' %}">
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </form>
