@@ -241,7 +241,7 @@
                         <div style="height: 350px">
                             <canvas id="cizgi-grafik"></canvas>
                         </div>
-						
+                        
                         <div class="widget-chart-content text-center mt-5">
                             <div class="widget-description mt-0 text-warning">
                                 <i class="fa fa-arrow-left"></i>
@@ -663,134 +663,134 @@
 {% block extrascript %}
 <script>
 var cizgi_config = {
-	type: 'line',
-	data: {
-		labels: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz'],
-		datasets: [{
-			label: 'İlk',
-			backgroundColor: window.chartColors.red,
-			borderColor: window.chartColors.red,
-			data: [
-				10,
-				15,
-				31,
-				33,
-				34,
-				42,
-				70
-			],
-			fill: false,
-		}, {
-			label: 'İkinci',
-			fill: false,
-			backgroundColor: window.chartColors.blue,
-			borderColor: window.chartColors.blue,
-			data: [
-				1,
-				3,
-				22,
-				25,
-				48,
-				57,
-				84
-			],
-		}]
-	},
-	options: {
-		responsive: true,
-		maintainAspectRatio: false,
-		title: {
-			display: true,
-			text: 'Bişeyin Grafiği'
-		},
-		tooltips: {
-			mode: 'index',
-			intersect: false,
-		},
-		hover: {
-			mode: 'nearest',
-			intersect: true
-		},
-		scales: {
-			xAxes: [{
-				display: true,
-				scaleLabel: {
-					display: true,
-					labelString: 'Month'
-				}
-			}],
-			yAxes: [{
-				display: true,
-				scaleLabel: {
-					display: true,
-					labelString: 'Value'
-				}
-			}]
-		}
-	}
+    type: 'line',
+    data: {
+        labels: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz'],
+        datasets: [{
+            label: 'İlk',
+            backgroundColor: window.chartColors.red,
+            borderColor: window.chartColors.red,
+            data: [
+                10,
+                15,
+                31,
+                33,
+                34,
+                42,
+                70
+            ],
+            fill: false,
+        }, {
+            label: 'İkinci',
+            fill: false,
+            backgroundColor: window.chartColors.blue,
+            borderColor: window.chartColors.blue,
+            data: [
+                1,
+                3,
+                22,
+                25,
+                48,
+                57,
+                84
+            ],
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        title: {
+            display: true,
+            text: 'Bişeyin Grafiği'
+        },
+        tooltips: {
+            mode: 'index',
+            intersect: false,
+        },
+        hover: {
+            mode: 'nearest',
+            intersect: true
+        },
+        scales: {
+            xAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Month'
+                }
+            }],
+            yAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Value'
+                }
+            }]
+        }
+    }
 };
 
 var pasta_config = {
-			type: 'doughnut',
-			data: {
-				datasets: [{
-					data: [
-						14,
-						20,
-						28,
-						48,
-						32,
-					],
-					backgroundColor: [
-						window.chartColors.red,
-						window.chartColors.orange,
-						window.chartColors.yellow,
-						window.chartColors.green,
-						window.chartColors.blue,
-					],
-					label: 'Dataset 1'
-				}],
-				labels: [
-					'41 numara',
-					'42 numara',
-					'43 numara',
-					'44 numara',
-					'45 numara'
-				]
-			},
-			options: {
-				responsive: true,
-				legend: {
-					position: 'top',
-					display: ((screen.width < 450) ? false : true)
-				},
-				title: {
-					display: true,
-					text: 'Ayakkabı Numara / Stok'
-				},
-				animation: {
-					animateScale: true,
-					animateRotate: true
-				}
-			}
-		};
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [
+                        14,
+                        20,
+                        28,
+                        48,
+                        32,
+                    ],
+                    backgroundColor: [
+                        window.chartColors.red,
+                        window.chartColors.orange,
+                        window.chartColors.yellow,
+                        window.chartColors.green,
+                        window.chartColors.blue,
+                    ],
+                    label: 'Dataset 1'
+                }],
+                labels: [
+                    '41 numara',
+                    '42 numara',
+                    '43 numara',
+                    '44 numara',
+                    '45 numara'
+                ]
+            },
+            options: {
+                responsive: true,
+                legend: {
+                    position: 'top',
+                    display: ((screen.width < 450) ? false : true)
+                },
+                title: {
+                    display: true,
+                    text: 'Ayakkabı Numara / Stok'
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
+            }
+        };
 
 window.onload = function() {
-			var cizgi_ctx = document.getElementById('cizgi-grafik').getContext('2d');
-			window.cizgiGrafik = new Chart(cizgi_ctx, cizgi_config);
-			var pasta_ctx = document.getElementById('pasta-grafik').getContext('2d');
-			window.pastaGrafik = new Chart(pasta_ctx, pasta_config);
-		};
+            var cizgi_ctx = document.getElementById('cizgi-grafik').getContext('2d');
+            window.cizgiGrafik = new Chart(cizgi_ctx, cizgi_config);
+            var pasta_ctx = document.getElementById('pasta-grafik').getContext('2d');
+            window.pastaGrafik = new Chart(pasta_ctx, pasta_config);
+        };
 
 // Belli bi genişliğin altında Legend'i kapatmazsam Pasta Grafik çok küçük kalıyo.
 window.onresize = function(event) {
     if (screen.width < 450 && pastaGrafik.legend.options.display) {
-		pastaGrafik.legend.options.display = false;
-		pastaGrafik.update();
-	} else if (screen.width > 450 && !(pastaGrafik.legend.options.display)) {
-		pastaGrafik.legend.options.display = true;
-		pastaGrafik.update();
-	}
+        pastaGrafik.legend.options.display = false;
+        pastaGrafik.update();
+    } else if (screen.width > 450 && !(pastaGrafik.legend.options.display)) {
+        pastaGrafik.legend.options.display = true;
+        pastaGrafik.update();
+    }
 };
 </script>
 {% endblock %}
