@@ -32,7 +32,7 @@ except ImportError:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['serene-mesa-18692.herokuapp.com','localhost']
+ALLOWED_HOSTS = []
 
 
 # Application definition
