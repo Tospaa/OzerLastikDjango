@@ -1,1 +1,1 @@
-web: gunicorn tsp_prj.tsp_prj.wsgi --log-file -
+web: gunicorn tsp_prj.wsgi --log-file -
