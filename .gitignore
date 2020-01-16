@@ -60,9 +60,13 @@ coverage.xml
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+staticfiles/
 
 # My secret key:
 secret_key.py
+
+# My Database Password
+database_password.py
 
 # Flask stuff:
 instance/
