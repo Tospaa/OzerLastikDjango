@@ -1,0 +1,55 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Hammadde Ekle/Çıkar{% endblock %}
+{% block pagetitle %}Hammadde Ekle/Çıkar{% endblock %}
+{% block pagesubtitle %}Bu sayfadan stok içeriğine hammadde eklemesi ve çıkarması yapılır. {% endblock %}
+{% block content %}
+<div class="main-card mb-3 card">
+    <div class="card-body">
+        <h5 class="card-title">Hammadde Ekle / Çıkar</h5>
+        <form method="POST">
+		    {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary btn-lg">Kaydet</button>
+            {% if successful == "True" %}
+            
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block extrascript %}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+{% endblock %}
+{% block modal %}
+{% if successful %}
+<button type="button" id="modalbutton" data-toggle="modal" data-target=".bd-example-modal-sm" style="display: none;"></button>
+
+<script type="text/javascript">
+window.onload = function() {
+            document.getElementById("modalbutton").click();
+        };
+</script>
+
+<div class="modal fade bd-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="SmallModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Mesaj</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Kayıt başarılı.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from api.models import HammaddeDegisiklikForm
 
 @login_required
 def index(request):
@@ -23,4 +24,21 @@ def account(request):
         user.profile.title = request.POST['title']
         # TODO: Burda foto ekleme falan olsun.
         user.save()
-        return HttpResponseRedirect('/')
+        return redirect('dashboard:home')
+
+@login_required
+def hammadde(request):
+    if request.method == 'POST':
+        form = HammaddeDegisiklikForm(request.POST)
+        if form.is_valid():
+            # from: https://stackoverflow.com/a/46941862
+            #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ THANK YOU SO MUCH!!!
+            hammadde_degisiklik_obj = form.save(commit=False)
+            hammadde_degisiklik_obj.kullanici_id = request.user.id
+            hammadde_degisiklik_obj.save()
+            successful = True
+            form = HammaddeDegisiklikForm()
+    elif request.method == 'GET':
+        successful = False
+        form = HammaddeDegisiklikForm()
+    return render(request, 'dashboard/hammadde.html', {'form': form, 'successful': successful})
