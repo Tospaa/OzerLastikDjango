@@ -92,6 +92,12 @@ DATABASES = {
         'PORT': '',
     }
 }
+# DATABASES = {
+    # 'default': {
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
+# }
 
 
 # Password validation
@@ -184,3 +190,6 @@ LOGGING = {
     }
 }
 
+# In order to be able to upload user avatar, I need to specify MEDIA_ROOT property
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploadedmedia')

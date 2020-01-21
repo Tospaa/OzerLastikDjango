@@ -10,25 +10,21 @@
         <h5 class="card-title">Hesap Ayarları</h5>
         <form method="POST" class="">
 		    {% csrf_token %}
+            {% for field in formu %}
             <div class="position-relative row form-group">
-                <label for="username" class="col-sm-2 col-form-label">Kullanıcı Adı</label>
-                <div class="col-sm-10"><input name="username" id="username" type="text" disabled value="{{ user }}" class="form-control"></div>
+                <label for="{{ field.id_for_label }}" class="col-sm-2 col-form-label">{{ field.label }}</label>
+                <div class="col-sm-10">{{ field }}</div>
             </div>
+            {% endfor %}
+            {% for field in formp %}
             <div class="position-relative row form-group">
-                <label for="first_name" class="col-sm-2 col-form-label">İsim</label>
-                <div class="col-sm-10"><input name="first_name" id="first_name" type="text" value="{{ user.first_name }}" class="form-control"></div>
+                <label for="{{ field.id_for_label }}" class="col-sm-2 col-form-label">{{ field.label }}</label>
+                <div class="col-sm-10">{{ field }}</div>
             </div>
-            <div class="position-relative row form-group">
-                <label for="last_name" class="col-sm-2 col-form-label">Soyisim</label>
-                <div class="col-sm-10"><input name="last_name" id="last_name" type="text" value="{{ user.last_name }}" class="form-control"></input></div>
-            </div>
-            <div class="position-relative row form-group">
-                <label for="title" class="col-sm-2 col-form-label">Ünvan</label>
-                <div class="col-sm-10"><input name="title" id="title" type="text" value="{{ user.profile.title }}" class="form-control"></input></div>
-            </div>
+            {% endfor %}
             <div class="position-relative row form-check">
                 <div class="col-sm-10 offset-sm-2">
-                    <button type="submit" class="btn btn-secondary">Kaydet</button>
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
                 </div>
             </div>
         </form>

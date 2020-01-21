@@ -251,7 +251,7 @@ class HammaddeDegisiklik(models.Model):
     
     madde = models.CharField(max_length=64, choices=HAMMADDE_SECENEKLERI, default='AgizBandi')
     miktar = models.IntegerField()
-    notlar = models.CharField(max_length=256)
+    notlar = models.CharField(max_length=256, blank=True)
     tarih = models.DateTimeField(auto_now_add=True)
     kullanici = models.ForeignKey(User, on_delete=models.PROTECT)
 
@@ -266,7 +266,7 @@ class MyModelForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control'
 
 class HammaddeDegisiklikForm(MyModelForm):
-    notlar = forms.CharField(required=False, widget=forms.Textarea)
+    notlar = forms.CharField(widget=forms.Textarea)
     
     class Meta:
         model = HammaddeDegisiklik
