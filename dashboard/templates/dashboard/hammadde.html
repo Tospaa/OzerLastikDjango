@@ -19,7 +19,7 @@
 </div>
 {% endblock %}
 {% block modal %}
-{% if successful %}
+{% if messages %}
 <button type="button" id="modalbutton" data-toggle="modal" data-target=".bd-example-modal-sm" style="display: none;"></button>
 
 <script type="text/javascript">
@@ -38,7 +38,7 @@ window.onload = function() {
                 </button>
             </div>
             <div class="modal-body">
-                <p>Kayıt başarılı.</p>
+                {% for message in messages %}<p>{{ message }}</p>{% endfor %}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Kapat</button>

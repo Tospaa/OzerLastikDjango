@@ -266,7 +266,7 @@ class MyModelForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control'
 
 class HammaddeDegisiklikForm(MyModelForm):
-    notlar = forms.CharField(widget=forms.Textarea)
+    notlar = forms.CharField(widget=forms.Textarea, required=False)
     
     class Meta:
         model = HammaddeDegisiklik

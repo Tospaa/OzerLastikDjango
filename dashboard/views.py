@@ -1,4 +1,5 @@
 import os
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
@@ -28,7 +29,6 @@ def account(request):
         formu = AccountFormU(request.POST, instance=loggedin_user)
         formp = AccountFormP(request.POST, request.FILES, instance=loggedin_user.profile)
         if formu.is_valid() and formp.is_valid():
-            print(request.FILES)
             formu.save()
             formp.save()
             return redirect('dashboard:home')
@@ -39,7 +39,6 @@ def account(request):
 
 @login_required
 def hammadde(request):
-    successful = False
     if request.method == 'POST':
         form = HammaddeDegisiklikForm(request.POST)
         if form.is_valid():
@@ -48,8 +47,8 @@ def hammadde(request):
             hammadde_degisiklik_obj = form.save(commit=False)
             hammadde_degisiklik_obj.kullanici_id = request.user.id
             hammadde_degisiklik_obj.save()
-            successful = True
-            form = HammaddeDegisiklikForm()
+            messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
+            return redirect('dashboard:hammadde')
     elif request.method == 'GET':
         form = HammaddeDegisiklikForm()
-    return render(request, 'dashboard/hammadde.html', {'form': form, 'successful': successful})
+    return render(request, 'dashboard/hammadde.html', {'form': form})
