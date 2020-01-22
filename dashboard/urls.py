@@ -18,9 +18,9 @@ from . import views
 
 app_name = 'dashboard'
 urlpatterns = [
-    path('', views.index, name='home'),
-    path('contact/', views.contact, name='contact'),
-    path('license/', views.license, name='license'),
-    path('account/', views.account, name='account'),
+    path('', views.anasayfa, name='anasayfa'),
+    path('iletisim/', views.iletisim, name='iletisim'),
+    path('lisans/', views.lisans, name='lisans'),
+    path('hesap/', views.hesap, name='hesap'),
     path('hammadde/', views.hammadde, name='hammadde'),
 ]

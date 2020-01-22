@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     {% if user.is_authenticated %}
-    <meta http-equiv="refresh" content="0; URL={% url 'dashboard:home' %}" />
+    <meta http-equiv="refresh" content="0; URL={% url 'dashboard:anasayfa' %}" />
 </head>
 </html>
     {% else %}
@@ -69,18 +69,18 @@
                                             </div>
                                         </div>
                                         <div class="divider"></div>
-                                        <h6 class="mb-0">Hesabınız yok mu? <a href="{% url 'dashboard:contact' %}"
+                                        <h6 class="mb-0">Hesabınız yok mu? <a href="{% url 'dashboard:iletisim' %}"
                                                 class="text-primary">Yöneticiyle iletişime geçin.</a></h6>
                                         <div class="modal-footer clearfix">
                                             
-                                            <div class="float-left"><a href="{% url 'dashboard:contact' %}"
+                                            <div class="float-left"><a href="{% url 'dashboard:iletisim' %}"
                                                     class="btn-lg btn btn-link">Şifremi Unuttum</a></div>
                                             <div class="float-right">
                                                 <button type="submit" class="btn btn-primary btn-lg">Panele Giriş Yap</button>
                                                 {% if next %}
                                                 <input type="hidden" name="next" value="{{ next }}">
                                                 {% else %}
-                                                <input type="hidden" name="next" value="{% url 'dashboard:home' %}">
+                                                <input type="hidden" name="next" value="{% url 'dashboard:anasayfa' %}">
                                                 {% endif %}
                                             </div>
                                         </div>
@@ -88,7 +88,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="text-center text-white opacity-8 mt-3">Özer Lastik &copy; Ocak 2020 &bull; <a href="{% url 'dashboard:license' %}" style="color: #fff;">LICENSES</a></div>
+                        <div class="text-center text-white opacity-8 mt-3">Özer Lastik &copy; Ocak 2020 &bull; <a href="{% url 'dashboard:lisans' %}" style="color: #fff;">LICENSES</a></div>
                     </div>
                 </div>
             </div>

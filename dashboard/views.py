@@ -8,22 +8,22 @@ from .models import AccountFormU, AccountFormP
 from tsp_prj.settings import BASE_DIR
 
 # NoAuth sayfalar:
-def contact(request):
-    return render(request, 'dashboard/contact.html')
+def iletisim(request):
+    return render(request, 'dashboard/iletisim.html')
 
-def license(request):
+def lisans(request):
     licenses = ""
     with open(os.path.join(BASE_DIR, 'dashboard', 'licenses'), 'r') as f:
         licenses = f.read().replace('\n', '<br />')
-    return render(request, 'dashboard/license.html', {'licenses': licenses})
+    return render(request, 'dashboard/lisans.html', {'licenses': licenses})
 
 # Auth sayfalar
 @login_required
-def index(request):
-    return render(request, 'dashboard/index.html', {'title': 'Dashboard'})
+def anasayfa(request):
+    return render(request, 'dashboard/anasayfa.html', {'title': 'Dashboard'})
 
 @login_required
-def account(request):
+def hesap(request):
     loggedin_user = User.objects.get(pk=request.user.id)
     if request.method == 'POST':
         formu = AccountFormU(request.POST, instance=loggedin_user)
@@ -31,11 +31,11 @@ def account(request):
         if formu.is_valid() and formp.is_valid():
             formu.save()
             formp.save()
-            return redirect('dashboard:home')
+            return redirect('dashboard:anasayfa')
     elif request.method == 'GET':
         formu = AccountFormU(instance=loggedin_user)
         formp = AccountFormP(instance=loggedin_user.profile)
-    return render(request, 'dashboard/account.html', {'formu': formu, 'formp': formp})
+    return render(request, 'dashboard/hesap.html', {'formu': formu, 'formp': formp})
 
 @login_required
 def hammadde(request):
