@@ -1,11 +1,11 @@
 {% load static %}
 <!doctype html>
-<html lang="en">
+<html lang="tr">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Language" content="tr">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>{% block title %}Boş Sayfa{% endblock %} - Özer Lastik &amp; Ayakkabı</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
@@ -115,10 +115,6 @@
                                             <button type="button" tabindex="0" class="dropdown-item"
                                                 onclick="window.location.href = '{% url "logout" %}';">Çıkış
                                                 Yap</button>
-                                            <!-- <h6 tabindex="-1" class="dropdown-header">Header</h6>
-                                            <button type="button" tabindex="0" class="dropdown-item">Actions</button>
-                                            <div tabindex="-1" class="dropdown-divider"></div>
-                                            <button type="button" tabindex="0" class="dropdown-item">Dividers</button> -->
                                         </div>
                                     </div>
                                 </div>
@@ -452,21 +448,20 @@
                                     <li class="nav-item">
                                         Özer Lastik &copy; Ocak 2020
                                     </li>
-                                    <!-- <li class="nav-item">
-                                        <a href="javascript:void(0);" class="nav-link">
-                                            <div class="badge badge-success mr-1 ml-0">
-                                                <small>NEW</small>
-                                            </div>
-                                            Footer Link 4
+                                    <li class="nav-item" style="margin-left: 7px;">
+                                        &bull;
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'dashboard:license' %}" style="margin-left: 7px;">
+                                            LICENSES
                                         </a>
-                                    </li> -->
+                                    </li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- <script src="http://maps.google.com/maps/api/js?sensor=true"></script> -->
         </div>
     </div>
     <script type="text/javascript" src="{% static "dashboard/scripts/main.js" %}"></script>

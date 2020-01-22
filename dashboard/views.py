@@ -1,16 +1,25 @@
+import os
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from api.models import HammaddeDegisiklikForm
 from .models import AccountFormU, AccountFormP
+from tsp_prj.settings import BASE_DIR
 
+# NoAuth sayfalar:
+def contact(request):
+    return render(request, 'dashboard/contact.html')
+
+def license(request):
+    licenses = ""
+    with open(os.path.join(BASE_DIR, 'dashboard', 'licenses'), 'r') as f:
+        licenses = f.read().replace('\n', '<br />')
+    return render(request, 'dashboard/license.html', {'licenses': licenses})
+
+# Auth sayfalar
 @login_required
 def index(request):
     return render(request, 'dashboard/index.html', {'title': 'Dashboard'})
-
-def contact(request):
-    return render(request, 'dashboard/contact.html')
 
 @login_required
 def account(request):
