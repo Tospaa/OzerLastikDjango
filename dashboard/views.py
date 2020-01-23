@@ -31,6 +31,7 @@ def hesap(request):
         if formu.is_valid() and formp.is_valid():
             formu.save()
             formp.save()
+            # from: https://groups.google.com/forum/#!topic/django-users/SLw6SrIC8wI
             return redirect('dashboard:anasayfa')
     elif request.method == 'GET':
         formu = AccountFormU(instance=loggedin_user)
