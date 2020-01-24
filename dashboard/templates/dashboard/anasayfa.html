@@ -661,7 +661,7 @@
 </div>
 {% endblock %}
 {% block extrascript %}
-<script>
+<script type="text/javascript">
 var cizgi_config = {
     type: 'line',
     data: {
@@ -775,22 +775,11 @@ var pasta_config = {
             }
         };
 
-window.onload = function() {
+window.addEventListener("load",function(event) {
             var cizgi_ctx = document.getElementById('cizgi-grafik').getContext('2d');
             window.cizgiGrafik = new Chart(cizgi_ctx, cizgi_config);
             var pasta_ctx = document.getElementById('pasta-grafik').getContext('2d');
             window.pastaGrafik = new Chart(pasta_ctx, pasta_config);
-        };
-
-// Belli bi genişliğin altında Legend'i kapatmazsam Pasta Grafik çok küçük kalıyo.
-window.onresize = function(event) {
-    if (screen.width < 450 && pastaGrafik.legend.options.display) {
-        pastaGrafik.legend.options.display = false;
-        pastaGrafik.update();
-    } else if (screen.width > 450 && !(pastaGrafik.legend.options.display)) {
-        pastaGrafik.legend.options.display = true;
-        pastaGrafik.update();
-    }
-};
+        }, false);
 </script>
 {% endblock %}

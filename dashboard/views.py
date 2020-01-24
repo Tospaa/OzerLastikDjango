@@ -32,6 +32,7 @@ def hesap(request):
         if formu.is_valid() and formp.is_valid():
             formu.save()
             formp.save()
+            messages.add_message(request, messages.SUCCESS, 'Hesap bilgileriniz başarıyla kaydedilmiştir.')
             # from: https://groups.google.com/forum/#!topic/django-users/SLw6SrIC8wI
             return redirect('dashboard:anasayfa')
     elif request.method == 'GET':
