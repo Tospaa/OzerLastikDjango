@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
-from api.models import HammaddeDegisiklikForm
+from api.models import HammaddeDegisiklikForm, HammaddeDegisiklik
 from .models import AccountFormU, AccountFormP
 from tsp_prj.settings import BASE_DIR
 
@@ -42,6 +42,7 @@ def hesap(request):
 
 @login_required
 def hammadde(request):
+    son_on = HammaddeDegisiklik.objects.filter().order_by('-id')[:10]
     if request.method == 'POST':
         form = HammaddeDegisiklikForm(request.POST)
         if form.is_valid():
@@ -57,4 +58,4 @@ def hammadde(request):
                 messages.add_message(request, messages.ERROR, 'Veritabanına geçersiz girdi yapmaya çalıştınız. Stokta var olandan daha fazla malzemeyi çıktı gibi göstermeye çalışıyor olabilirsiniz. Girdiğiniz verileri gözden geçirin.')
     elif request.method == 'GET':
         form = HammaddeDegisiklikForm()
-    return render(request, 'dashboard/hammadde.html', {'form': form})
+    return render(request, 'dashboard/hammadde.html', {'form': form, 'son_on': son_on})
