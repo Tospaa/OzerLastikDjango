@@ -285,18 +285,17 @@ class HammaddeDegisiklikForm(MyModelForm):
 
 # Django sinyaller:
 
-@receiver(models.signals.post_save, sender=HammaddeDegisiklik)
-def create_hammaddedegisiklik_hammaddesondurum(sender, instance, created, **kwargs):
-    if created:
-        # from: https://www.reddit.com/r/django/comments/5skcnf/django_timezone_now_vs_today/ddh3ndg/
-        if HammaddeSonDurum.objects.filter(tarih=timezone.localtime(timezone.now()).date()).exists():
-            modified_record = HammaddeSonDurum.objects.get(tarih=timezone.localtime(timezone.now()).date())
-            vars(modified_record)[instance.madde] += instance.miktar
-            modified_record.save()
-        else:
-            new_record = HammaddeSonDurum.objects.latest('tarih')
-            # Primary Key değerini sil ki güncelleme yerine yeni kayıt girdisi yapılsın
-            new_record.pk = None
-            new_record.tarih = timezone.now().date()
-            vars(new_record)[instance.madde] += instance.miktar
-            new_record.save()
+@receiver(models.signals.pre_save, sender=HammaddeDegisiklik)
+def create_hammaddedegisiklik_hammaddesondurum(sender, instance, **kwargs):
+    # from: https://www.reddit.com/r/django/comments/5skcnf/django_timezone_now_vs_today/ddh3ndg/
+    if HammaddeSonDurum.objects.filter(tarih=timezone.localtime(timezone.now()).date()).exists():
+        modified_record = HammaddeSonDurum.objects.get(tarih=timezone.localtime(timezone.now()).date())
+        vars(modified_record)[instance.madde] += instance.miktar
+        modified_record.save()
+    else:
+        new_record = HammaddeSonDurum.objects.latest('tarih')
+        # Primary Key değerini sil ki güncelleme yerine yeni kayıt girdisi yapılsın
+        new_record.pk = None
+        new_record.tarih = timezone.now().date()
+        vars(new_record)[instance.madde] += instance.miktar
+        new_record.save()

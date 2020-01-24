@@ -2,6 +2,7 @@ import os
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from api.models import HammaddeDegisiklikForm
 from .models import AccountFormU, AccountFormP
@@ -43,13 +44,16 @@ def hammadde(request):
     if request.method == 'POST':
         form = HammaddeDegisiklikForm(request.POST)
         if form.is_valid():
-            # from: https://stackoverflow.com/a/46941862
-            #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ THANK YOU SO MUCH!!!
-            hammadde_degisiklik_obj = form.save(commit=False)
-            hammadde_degisiklik_obj.kullanici_id = request.user.id
-            hammadde_degisiklik_obj.save()
-            messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
-            return redirect('dashboard:hammadde')
+            try:
+                # from: https://stackoverflow.com/a/46941862
+                #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ THANK YOU SO MUCH!!!
+                hammadde_degisiklik_obj = form.save(commit=False)
+                hammadde_degisiklik_obj.kullanici_id = request.user.id
+                hammadde_degisiklik_obj.save()
+                messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
+                return redirect('dashboard:hammadde')
+            except IntegrityError:
+                messages.add_message(request, messages.ERROR, 'Veritabanına geçersiz girdi yapmaya çalıştınız. Stokta var olandan daha fazla malzemeyi çıktı gibi göstermeye çalışıyor olabilirsiniz. Girdiğiniz verileri gözden geçirin.')
     elif request.method == 'GET':
         form = HammaddeDegisiklikForm()
     return render(request, 'dashboard/hammadde.html', {'form': form})
