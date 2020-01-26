@@ -40,10 +40,8 @@
                                             <div class="widget-heading">{{ row.kullanici.get_full_name }}</div>
                                             <div class="widget-subheading">{{ row.kullanici.profile.title }}</div>
                                         </div>
-                                        <div class="widget-content-right">
+                                        <div class="widget-content-right" data-toggle="tooltip" data-placement="bottom" data-original-title="Tarih: {{ row.tarih }}">
                                             <div class="font-size-xlg text-muted">
-                                                <small class="pr-1">{{ row.tarih }}</small>
-                                                <small class="pr-1">&bull;</small>
                                                 <small class="pr-1">{{ row.get_madde_display }}</small>
                                                 <span>{{ row.miktar|abs }}</span>
                                                 <small class="text-{% if row.miktar < 0 %}danger{% else %}success{% endif %} pl-2">

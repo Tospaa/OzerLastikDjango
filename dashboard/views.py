@@ -42,7 +42,7 @@ def hesap(request):
 
 @login_required
 def hammadde(request):
-    son_on = HammaddeDegisiklik.objects.filter().order_by('-id')[:10]
+    son_on = HammaddeDegisiklik.objects.select_related("kullanici__profile").order_by("-id")[:10]
     if request.method == 'POST':
         form = HammaddeDegisiklikForm(request.POST)
         if form.is_valid():

@@ -136,7 +136,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/staticfiles/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 #  Add configuration for static files storage using whitenoise
@@ -192,4 +192,5 @@ LOGGING = {
 
 # In order to be able to upload user avatar, I need to specify MEDIA_ROOT property
 
+MEDIA_URL = '/uploadedmedia/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploadedmedia')
