@@ -35,7 +35,7 @@ class AccountFormU(MyModelForm):
 class AccountFormP(MyModelForm):
     class Meta:
         model = Profile
-        exclude = ('user','photo')  # fotoğraf yükleme işini çözemedim. yarına inş...
+        exclude = ('user',)
         labels = {
             'title': 'Ünvan',
             'photo': 'Fotoğraf',
