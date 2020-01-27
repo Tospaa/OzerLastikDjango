@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
-from api.models import HammaddeDegisiklikForm, HammaddeDegisiklik
+from api.models import MamulDegisiklikForm, MamulDegisiklik, HammaddeDegisiklikForm, HammaddeDegisiklik
 from .models import AccountFormU, AccountFormP
 from tsp_prj.settings import BASE_DIR
 
@@ -13,7 +13,7 @@ def iletisim(request):
     return render(request, 'dashboard/iletisim.html')
 
 def lisans(request):
-    licenses = ""
+    licenses = ''
     with open(os.path.join(BASE_DIR, 'dashboard', 'licenses'), 'r') as f:
         licenses = f.read().replace('\n', '<br />')
     return render(request, 'dashboard/lisans.html', {'licenses': licenses})
@@ -41,14 +41,32 @@ def hesap(request):
     return render(request, 'dashboard/hesap.html', {'formu': formu, 'formp': formp})
 
 @login_required
-def hammadde(request):
-    son_on = HammaddeDegisiklik.objects.select_related("kullanici__profile").order_by("-id")[:10]
+def mamul(request):
+    son_on = MamulDegisiklik.objects.select_related('kullanici__profile').order_by('-id')[:10]
     if request.method == 'POST':
-        form = HammaddeDegisiklikForm(request.POST)
+        form = MamulDegisiklikForm(request.POST)
         if form.is_valid():
             try:
                 # from: https://stackoverflow.com/a/46941862
                 #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ THANK YOU SO MUCH!!!
+                mamul_degisiklik_obj = form.save(commit=False)
+                mamul_degisiklik_obj.kullanici_id = request.user.id
+                mamul_degisiklik_obj.save()
+                messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
+                return redirect('dashboard:mamul')
+            except IntegrityError:
+                messages.add_message(request, messages.ERROR, 'Veritabanına geçersiz girdi yapmaya çalıştınız. Stokta var olandan daha fazla malzemeyi çıktı gibi göstermeye çalışıyor olabilirsiniz. Girdiğiniz verileri gözden geçirin.')
+    elif request.method == 'GET':
+        form = MamulDegisiklikForm()
+    return render(request, 'dashboard/mamul.html', {'form': form, 'son_on': son_on})
+
+@login_required
+def hammadde(request):
+    son_on = HammaddeDegisiklik.objects.select_related('kullanici__profile').order_by('-id')[:10]
+    if request.method == 'POST':
+        form = HammaddeDegisiklikForm(request.POST)
+        if form.is_valid():
+            try:
                 hammadde_degisiklik_obj = form.save(commit=False)
                 hammadde_degisiklik_obj.kullanici_id = request.user.id
                 hammadde_degisiklik_obj.save()

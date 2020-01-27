@@ -1,0 +1,64 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load dashboard_filters %}
+{% block title %}Mamul Ekle/Çıkar{% endblock %}
+{% block icon %}pe-7s-ticket icon-gradient bg-happy-itmeo{% endblock %}
+{% block pagetitle %}Mamul Ekle/Çıkar{% endblock %}
+{% block pagesubtitle %}Bu sayfadan stok içeriğine mamul eklemesi ve çıkarması yapılır. {% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12 col-lg-6">
+        <div class="mb-3 card">
+            <div class="card-body">
+                <h5 class="card-title">Mamul Ekle / Çıkar</h5>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary btn-lg">Kaydet</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 col-lg-6">
+        <div class="mb-3 card">
+            <div class="card-body">
+                <h5 class="card-title">Son 10 Mamul Girdi / Çıktı İşlemi</h5>
+                <div class="scroll-area-lg">
+                    <div class="scrollbar-container">
+                        <ul class="rm-list-borders rm-list-borders-scroll list-group list-group-flush">
+                        {% for row in son_on %}
+                            <li class="list-group-item">
+                                <div class="widget-content p-0">
+                                    <div class="widget-content-wrapper">
+                                        <div class="widget-content-left mr-3">
+                                        {% if row.kullanici.profile.photo %}
+                                            <img width="42" class="rounded-circle" src="/uploadedmedia/{{ row.kullanici.profile.photo }}" alt="">
+                                        {% else %}
+                                            <img width="42" class="rounded-circle" src="{% static 'dashboard/images/avatars/default_avatar.png' %}" alt="">
+                                        {% endif %}
+                                        </div>
+                                        <div class="widget-content-left">
+                                            <div class="widget-heading">{{ row.kullanici.get_full_name }}</div>
+                                            <div class="widget-subheading">{{ row.kullanici.profile.title }}</div>
+                                        </div>
+                                        <div class="widget-content-right" data-toggle="tooltip" data-placement="bottom" data-original-title="Tarih: {{ row.tarih }}">
+                                            <div class="font-size-xlg text-muted">
+                                                <small class="pr-1">{{ row.get_mamul_model_display }}</small>
+                                                <span>{{ row.adet|abs }}</span>
+                                                <small class="text-{% if row.adet < 0 %}danger{% else %}success{% endif %} pl-2">
+                                                    <i class="fa fa-angle-{% if row.adet < 0 %}down{% else %}up{% endif %}"></i>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

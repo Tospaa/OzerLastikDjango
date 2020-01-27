@@ -22,5 +22,6 @@ urlpatterns = [
     path('iletisim/', views.iletisim, name='iletisim'),
     path('lisans/', views.lisans, name='lisans'),
     path('hesap/', views.hesap, name='hesap'),
+    path('mamul/', views.mamul, name='mamul'),
     path('hammadde/', views.hammadde, name='hammadde'),
 ]
