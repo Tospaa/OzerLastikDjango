@@ -1,55 +1,115 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.db import models
+from django.db import models, IntegrityError
 from django.dispatch import receiver
 from django.utils import timezone
+import json
 
 # Mamuller:
 
-class KrepCizme(models.Model):
-    Numara = models.IntegerField()
-    Adet = models.IntegerField()
-    """
-        Krep kısa konç
-        krep uzun konç
-        krep garson kısa
-        krep garson uzun
-        krep kahve bot
-        krep siyah bot
-        krep çelik burunlu çizme
-        kasık çizme
-    """
+class MamulSonDurum(models.Model):
+    tarih = models.DateField(unique=True)
+    KrepKisaKonc = models.TextField(blank=True)
+    KrepUzunKonc = models.TextField(blank=True)
+    KrepGarsonKisa = models.TextField(blank=True)
+    KrepGarsonUzun = models.TextField(blank=True)
+    KrepKahveBot = models.TextField(blank=True)
+    KrepSiyahBot = models.TextField(blank=True)
+    KrepCelikBurunluCizme = models.TextField(blank=True)
+    KasikCizme = models.TextField(blank=True)
+    FiletBezli = models.TextField(blank=True)
+    ZenneBezli = models.TextField(blank=True)
+    MerdaneBezli = models.TextField(blank=True)
+    MerdaneFanilali = models.TextField(blank=True)
+    ZenneIskarpin = models.TextField(blank=True)
+    MerdaneIskarpin = models.TextField(blank=True)
+    GarsonIskarpin = models.TextField(blank=True)
+    PresCizmeOB = models.TextField(blank=True)
+    PresCizmeS4 = models.TextField(blank=True)
+    PresCizmeS5 = models.TextField(blank=True)
+    ElektrikciOB = models.TextField(blank=True)
+    ElektrikciS4 = models.TextField(blank=True)
+    ElektrikciS5 = models.TextField(blank=True)
 
-    def __str___(self):
-        return "{0} numara ayakkabı".format(self.Numara)
-
-    def __repr___(self):
-        return "{0} numara ayakkabı repr".format(self.Numara)
-
-class GalosAyakkabi(models.Model):
-    Numara = models.IntegerField()
-    Adet = models.IntegerField()
-    """
-        Filet bezli
-        zenne bezli
-        merdane bezli
-        merdane fanilalı
-        zenne iskarpin
-        merdane iskarpin
-        garson iskarpin
-    """
-
-class KobaltCizme(models.Model):
-    Numara = models.IntegerField()
-    Adet = models.IntegerField()
-    """
-        pres çizme ob
-        pres çizme s4
-        pres çizme s5
-        elektrikçi ob
-        elektrikçi s4
-        elektrikçi s5
-    """
+class MamulDegisiklik(models.Model):
+    MAMUL_SECENEKLERI = [
+        ('Krep Çizme', (
+                ('KrepKisaKonc', 'Krep Kısa Konç'),
+                ('KrepUzunKonc', 'Krep Uzun Konç'),
+                ('KrepGarsonKisa', 'Krep Garson Kısa'),
+                ('KrepGarsonUzun', 'Krep Garson Uzun'),
+                ('KrepKahveBot', 'Krep Kahve Bot'),
+                ('KrepSiyahBot', 'Krep Siyah Bot'),
+                ('KrepCelikBurunluCizme', 'Krep Çelik Burunlu Çizme'),
+                ('KasikCizme', 'Kasık Çizme'),
+            )
+        ),
+        ('Galoş Ayakkabı', (
+                ('FiletBezli', 'Filet Bezli'),
+                ('ZenneBezli', 'Zenne Bezli'),
+                ('MerdaneBezli', 'Merdane Bezli'),
+                ('MerdaneFanilali', 'Merdane Fanilalı'),
+                ('ZenneIskarpin', 'Zenne İskarpin'),
+                ('MerdaneIskarpin', 'Merdane İskarpin'),
+                ('GarsonIskarpin', 'Garson İskarpin'),
+            )
+        ),
+        ('Kobalt Çizme', (
+                ('PresCizmeOB', 'Pres Çizme OB'),
+                ('PresCizmeS4', 'Pres Çizme S4'),
+                ('PresCizmeS5', 'Pres Çizme S5'),
+                ('ElektrikciOB', 'Elektrikçi OB'),
+                ('ElektrikciS4', 'Elektrikçi S4'),
+                ('ElektrikciS5', 'Elektrikçi S5'),
+            )
+        ),
+    ]
+    
+    NUMARA_SECENEKLERI = [
+        ('10', '10'),
+        ('11', '11'),
+        ('12', '12'),
+        ('13', '13'),
+        ('14', '14'),
+        ('15', '15'),
+        ('16', '16'),
+        ('17', '17'),
+        ('18', '18'),
+        ('19', '19'),
+        ('20', '20'),
+        ('21', '21'),
+        ('22', '22'),
+        ('23', '23'),
+        ('24', '24'),
+        ('25', '25'),
+        ('26', '26'),
+        ('27', '27'),
+        ('28', '28'),
+        ('29', '29'),
+        ('30', '30'),
+        ('31', '31'),
+        ('32', '32'),
+        ('33', '33'),
+        ('34', '34'),
+        ('35', '35'),
+        ('36', '36'),
+        ('37', '37'),
+        ('38', '38'),
+        ('39', '39'),
+        ('40', '40'),
+        ('41', '41'),
+        ('42', '42'),
+        ('43', '43'),
+        ('44', '44'),
+        ('45', '45')
+    ]
+    
+    mamul_model = models.CharField(max_length=32, choices=MAMUL_SECENEKLERI)
+    numara = models.CharField(max_length=2, choices=NUMARA_SECENEKLERI)
+    adet = models.IntegerField()
+    notlar = models.CharField(max_length=256, blank=True)
+    tarih = models.DateTimeField(auto_now_add=True)
+    kullanici = models.ForeignKey(User, on_delete=models.PROTECT)
 
 # Hammaddeler:
 
@@ -286,7 +346,7 @@ class HammaddeDegisiklikForm(MyModelForm):
 # Django sinyaller:
 
 @receiver(models.signals.pre_save, sender=HammaddeDegisiklik)
-def create_hammaddedegisiklik_hammaddesondurum(sender, instance, **kwargs):
+def create_update_hammaddesondurum_from_hammaddedegisiklik(sender, instance, **kwargs):
     try:
         # from: https://www.reddit.com/r/django/comments/5skcnf/django_timezone_now_vs_today/ddh3ndg/
         if HammaddeSonDurum.objects.filter(tarih=timezone.localtime(timezone.now()).date()).exists():
@@ -303,5 +363,53 @@ def create_hammaddedegisiklik_hammaddesondurum(sender, instance, **kwargs):
     except HammaddeSonDurum.DoesNotExist:
         # Veritabanında hiç hammadde son durum girdisi yok demektir.
         first_record = HammaddeSonDurum(tarih=timezone.now().date())
-        vars(first_record)[instance.madde] += instance.miktar
+        vars(first_record)[instance.madde] = instance.miktar
+        first_record.save()
+
+@receiver(models.signals.pre_save, sender=MamulDegisiklik)
+def create_update_mamulsondurum_from_mamuldegisiklik(sender, instance, **kwargs):
+    try:
+        if MamulSonDurum.objects.filter(tarih=timezone.localtime(timezone.now()).date()).exists():
+            modified_record = MamulSonDurum.objects.get(tarih=timezone.localtime(timezone.now()).date())
+            try:
+                required_dict = json.loads(vars(modified_record)[instance.mamul_model])
+                try:
+                    required_dict[instance.numara] += instance.adet
+                except KeyError:
+                    required_dict[instance.numara] = instance.adet
+                if required_dict[instance.numara] < 0:
+                    raise IntegrityError
+                vars(modified_record)[instance.mamul_model] = json.dumps(required_dict)
+                modified_record.save()
+            except json.decoder.JSONDecodeError:
+                if instance.adet < 0:
+                    raise IntegrityError
+                vars(modified_record)[instance.mamul_model] = json.dumps({instance.numara: instance.adet})
+                modified_record.save()
+        else:
+            new_record = MamulSonDurum.objects.latest('tarih')
+            # Primary Key değerini sil ki güncelleme yerine yeni kayıt girdisi yapılsın
+            new_record.pk = None
+            new_record.tarih = timezone.now().date()
+            try:
+                required_dict = dict(json.loads(vars(new_record)[instance.mamul_model]))
+                try:
+                    required_dict[instance.numara] += instance.adet
+                except KeyError:
+                    required_dict[instance.numara] = instance.adet
+                if required_dict[instance.numara] < 0:
+                    raise IntegrityError
+                vars(new_record)[instance.mamul_model] = json.dumps(required_dict)
+                new_record.save()
+            except json.decoder.JSONDecodeError:
+                if instance.adet < 0:
+                    raise IntegrityError
+                vars(new_record)[instance.mamul_model] = json.dumps({instance.numara: instance.adet})
+                new_record.save()
+    except MamulSonDurum.DoesNotExist:
+        # Veritabanında hiç mamul son durum girdisi yok demektir.
+        first_record = MamulSonDurum(tarih=timezone.now().date())
+        if instance.adet < 0:
+            raise IntegrityError
+        vars(first_record)[instance.mamul_model] = json.dumps({instance.numara: instance.adet})
         first_record.save()
