@@ -66,6 +66,8 @@ class MamulDegisiklik(models.Model):
     ]
     
     NUMARA_SECENEKLERI = [
+        ('8', '8'),
+        ('9', '9'),
         ('10', '10'),
         ('11', '11'),
         ('12', '12'),
@@ -101,7 +103,12 @@ class MamulDegisiklik(models.Model):
         ('42', '42'),
         ('43', '43'),
         ('44', '44'),
-        ('45', '45')
+        ('45', '45'),
+        ('46', '46'),
+        ('47', '47'),
+        ('48', '48'),
+        ('49', '49'),
+        ('50', '50')
     ]
     
     mamul_model = models.CharField(max_length=32, choices=MAMUL_SECENEKLERI)
@@ -342,6 +349,9 @@ class MamulDegisiklikForm(MyModelForm):
     class Meta:
         model = MamulDegisiklik
         exclude=('kullanici',)
+        labels = {
+            'mamul_model': 'Model'
+        }
 
 class HammaddeDegisiklikForm(MyModelForm):
     notlar = forms.CharField(widget=forms.Textarea, required=False)
@@ -363,12 +373,12 @@ def create_update_mamulsondurum_from_mamuldegisiklik(sender, instance, **kwargs)
                     required_dict[instance.numara] += instance.adet
                 except KeyError:
                     required_dict[instance.numara] = instance.adet
-                if required_dict[instance.numara] < 0:
+                if required_dict[instance.numara] < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
                     raise IntegrityError
                 vars(modified_record)[instance.mamul_model] = json.dumps(required_dict)
                 modified_record.save()
             except json.decoder.JSONDecodeError:
-                if instance.adet < 0:
+                if instance.adet < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
                     raise IntegrityError
                 vars(modified_record)[instance.mamul_model] = json.dumps({instance.numara: instance.adet})
                 modified_record.save()
@@ -383,19 +393,19 @@ def create_update_mamulsondurum_from_mamuldegisiklik(sender, instance, **kwargs)
                     required_dict[instance.numara] += instance.adet
                 except KeyError:
                     required_dict[instance.numara] = instance.adet
-                if required_dict[instance.numara] < 0:
+                if required_dict[instance.numara] < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
                     raise IntegrityError
                 vars(new_record)[instance.mamul_model] = json.dumps(required_dict)
                 new_record.save()
             except json.decoder.JSONDecodeError:
-                if instance.adet < 0:
+                if instance.adet < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
                     raise IntegrityError
                 vars(new_record)[instance.mamul_model] = json.dumps({instance.numara: instance.adet})
                 new_record.save()
     except MamulSonDurum.DoesNotExist:
         # Veritabanında hiç mamul son durum girdisi yok demektir.
         first_record = MamulSonDurum(tarih=timezone.now().date())
-        if instance.adet < 0:
+        if instance.adet < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
             raise IntegrityError
         vars(first_record)[instance.mamul_model] = json.dumps({instance.numara: instance.adet})
         first_record.save()

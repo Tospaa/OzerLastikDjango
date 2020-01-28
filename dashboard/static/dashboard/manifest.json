@@ -1,0 +1,14 @@
+{
+  "name": "ÖzerLastik Dashboard",
+  "short_name": "Dashboard",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff",
+  "theme_color": "#fff",
+  "description": "Özer Lastik Dashboard WebApp",
+  "icons": [{
+    "src": "images/icon.png",
+    "sizes": "81x81",
+    "type": "image/png"
+  }]
+}
