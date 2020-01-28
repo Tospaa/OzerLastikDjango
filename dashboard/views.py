@@ -77,3 +77,7 @@ def hammadde(request):
     elif request.method == 'GET':
         form = HammaddeDegisiklikForm()
     return render(request, 'dashboard/hammadde.html', {'form': form, 'son_on': son_on})
+
+@login_required
+def arama(request):
+    return render(request, 'dashboard/arama.html', {'q': request.GET['q']})

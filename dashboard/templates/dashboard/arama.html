@@ -1,0 +1,18 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Arama{% endblock %}
+{% block icon %}pe-7s-search icon-gradient bg-night-fade{% endblock %}
+{% block pagetitle %}Arama{% endblock %}
+{% block pagesubtitle %}{% if q %}{{ q }} için arama sonuçları.{% else %}Arama değeri girmediniz.{% endif %}{% endblock %}
+{% block content %}
+<div class="main-card mb-3 card">
+    <div class="card-body">
+        <h5 class="card-title">Arama</h5>
+        {% if q %}
+        <span>{{ q }} arama değerine ait sonuç bulunamadı.</span>
+        {% else %}
+        <span>Lütfen bir arama değeri girin.</span>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

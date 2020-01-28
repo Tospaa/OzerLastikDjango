@@ -63,10 +63,10 @@
             </div>
             <div class="app-header__content">
                 <div class="app-header-left">
-                    <div class="search-wrapper">
+                    <div class="search-wrapper" id="search-div">
                         <div class="input-holder">
-                            <input type="text" class="search-input" placeholder="Type to search">
-                            <button class="search-icon"><span></span></button>
+                            <form action="{% url 'dashboard:arama' %}"><input type="text" class="search-input" name="q" placeholder="Arama yap" required><button type="submit" id="search-button" style="display: none;"></button></form>
+                            <button class="search-icon" onclick="searchButtonClicked();"><span></span></button>
                         </div>
                         <button class="close"></button>
                     </div>
@@ -298,6 +298,13 @@
         </div>
     </div>
     <script type="text/javascript" src="{% static "dashboard/scripts/main.js" %}"></script>
+    <script type="text/javascript">
+        searchButtonClicked = function() {
+            if (document.getElementById('search-div').getAttribute('class') == 'search-wrapper active') {
+                document.getElementById('search-button').click()
+            }
+        }
+    </script>
     {% block extrascript %}{% endblock %}
 {% if messages %}
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>

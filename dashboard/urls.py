@@ -19,6 +19,7 @@ from . import views
 app_name = 'dashboard'
 urlpatterns = [
     path('', views.anasayfa, name='anasayfa'),
+    path('arama/', views.arama, name='arama'),
     path('iletisim/', views.iletisim, name='iletisim'),
     path('lisans/', views.lisans, name='lisans'),
     path('hesap/', views.hesap, name='hesap'),
