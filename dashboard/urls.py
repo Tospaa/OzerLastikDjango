@@ -25,4 +25,6 @@ urlpatterns = [
     path('hesap/', views.hesap, name='hesap'),
     path('mamul/', views.mamul, name='mamul'),
     path('hammadde/', views.hammadde, name='hammadde'),
+    path('mamulrapor/', views.mamulrapor, name='mamulrapor'),
+    path('hammadderapor/', views.hammadderapor, name='hammadderapor'),
 ]

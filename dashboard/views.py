@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
-from api.models import MamulDegisiklikForm, MamulDegisiklik, HammaddeDegisiklikForm, HammaddeDegisiklik
+from django.utils.datastructures import MultiValueDictKeyError
+from api.models import MamulDegisiklikForm, MamulDegisiklik, HammaddeDegisiklikForm, HammaddeDegisiklik, MamulSonDurum, HammaddeSonDurum
 from .models import AccountFormU, AccountFormP
 from tsp_prj.settings import BASE_DIR
 
@@ -81,3 +82,20 @@ def hammadde(request):
 @login_required
 def arama(request):
     return render(request, 'dashboard/arama.html', {'q': request.GET['q']})
+
+@login_required
+def mamulrapor(request):
+    if not request.GET:
+        mamul_son_degisiklikler = MamulDegisiklik.objects.order_by('-id')[:10]
+        mamul_son_son_durum = MamulSonDurum.objects.order_by('-id')[:10]
+        return render(request, 'dashboard/mamulrapor.html', {'mamul_son_degisiklikler': mamul_son_degisiklikler, 'mamul_son_son_durum': mamul_son_son_durum})
+    elif request.GET['istek'] == 'deg_tumu':
+        # TODO: Implement all MamulDegisiklik
+        return render(request, 'dashboard/mamulrapor.html')
+    elif request.GET['istek'] == 'son_tumu':
+        # TODO: Implement all MamulSonDurum
+        return render(request, 'dashboard/mamulrapor.html')
+
+@login_required
+def hammadderapor(request):
+    return render(request, 'dashboard/hammadderapor.html')

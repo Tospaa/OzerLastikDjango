@@ -9,7 +9,7 @@
     <div class="card-body">
         <h5 class="card-title">Hesap Ayarları</h5>
         <form method="POST" enctype='multipart/form-data'>
-		    {% csrf_token %}
+            {% csrf_token %}
             {% for field in formu %}
             <div class="position-relative row form-group">
                 <label for="{{ field.id_for_label }}" class="col-sm-2 col-form-label">{{ field.label }}</label>
