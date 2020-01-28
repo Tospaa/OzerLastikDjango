@@ -63,9 +63,12 @@
             </div>
             <div class="app-header__content">
                 <div class="app-header-left">
-                    <div class="search-wrapper" id="search-div">
+                    <div class="search-wrapper{% if request.resolver_match.url_name == 'arama' %} active{% endif %}" id="search-div">
                         <div class="input-holder">
-                            <form action="{% url 'dashboard:arama' %}"><input type="text" class="search-input" name="q" placeholder="Arama yap" required><button type="submit" id="search-button" style="display: none;"></button></form>
+                            <form action="{% url 'dashboard:arama' %}">
+                                <input type="text" class="search-input" name="q" placeholder="Arama yap" required{% if request.resolver_match.url_name == 'arama' %} value="{{ q }}"{% endif %}>
+                                <button type="submit" id="search-button" style="display: none;"></button>
+                            </form>
                             <button class="search-icon" onclick="searchButtonClicked();"><span></span></button>
                         </div>
                         <button class="close"></button>
