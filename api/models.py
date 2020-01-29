@@ -296,7 +296,7 @@ class HammaddeDegisiklik(models.Model):
                 ('KobaltYesilTabanHamur', 'Kobalt Yeşil Taban Hamuru'),
             )
         ),
-        ('Bilinmeyen', (
+        ('Yardımcı Malzemeler', (
                 ('Kevlar', 'Kevlar'),
                 ('Eva', 'Eva'),
                 ('KompozitBurun', 'Kompozit Burun'),
@@ -350,7 +350,8 @@ class MamulDegisiklikForm(MyModelForm):
         model = MamulDegisiklik
         exclude=('kullanici',)
         labels = {
-            'mamul_model': 'Model'
+            'mamul_model': 'Model',
+            'adet': 'Çift adedi'
         }
 
 class HammaddeDegisiklikForm(MyModelForm):
@@ -375,10 +376,12 @@ def create_update_mamulsondurum_from_mamuldegisiklik(sender, instance, **kwargs)
                     required_dict[instance.numara] = instance.adet
                 if required_dict[instance.numara] < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
                     raise IntegrityError
-                vars(modified_record)[instance.mamul_model] = json.dumps(required_dict)
+                if required_dict[instance.numara] == 0:
+                    del required_dict[instance.numara]
+                vars(modified_record)[instance.mamul_model] = json.dumps({i:required_dict[i] for i in sorted(list(required_dict.keys()), key=lambda x: int(x))})  # Should this be here or on views???
                 modified_record.save()
             except json.decoder.JSONDecodeError:
-                if instance.adet < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
+                if instance.adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
                     raise IntegrityError
                 vars(modified_record)[instance.mamul_model] = json.dumps({instance.numara: instance.adet})
                 modified_record.save()
@@ -395,17 +398,19 @@ def create_update_mamulsondurum_from_mamuldegisiklik(sender, instance, **kwargs)
                     required_dict[instance.numara] = instance.adet
                 if required_dict[instance.numara] < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
                     raise IntegrityError
-                vars(new_record)[instance.mamul_model] = json.dumps(required_dict)
+                if required_dict[instance.numara] == 0:
+                    del required_dict[instance.numara]
+                vars(new_record)[instance.mamul_model] = json.dumps({i:required_dict[i] for i in sorted(list(required_dict.keys()), key=lambda x: int(x))})  # Should this be here or on views???
                 new_record.save()
             except json.decoder.JSONDecodeError:
-                if instance.adet < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
+                if instance.adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
                     raise IntegrityError
                 vars(new_record)[instance.mamul_model] = json.dumps({instance.numara: instance.adet})
                 new_record.save()
     except MamulSonDurum.DoesNotExist:
         # Veritabanında hiç mamul son durum girdisi yok demektir.
         first_record = MamulSonDurum(tarih=timezone.now().date())
-        if instance.adet < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
+        if instance.adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
             raise IntegrityError
         vars(first_record)[instance.mamul_model] = json.dumps({instance.numara: instance.adet})
         first_record.save()

@@ -85,16 +85,18 @@ def arama(request):
 
 @login_required
 def mamulrapor(request):
-    if not request.GET:
-        mamul_son_degisiklikler = MamulDegisiklik.objects.order_by('-id')[:10]
-        mamul_son_son_durum = MamulSonDurum.objects.order_by('-id')[:10]
-        return render(request, 'dashboard/mamulrapor.html', {'mamul_son_degisiklikler': mamul_son_degisiklikler, 'mamul_son_son_durum': mamul_son_son_durum})
-    elif request.GET['istek'] == 'deg_tumu':
-        # TODO: Implement all MamulDegisiklik
-        return render(request, 'dashboard/mamulrapor.html')
-    elif request.GET['istek'] == 'son_tumu':
-        # TODO: Implement all MamulSonDurum
-        return render(request, 'dashboard/mamulrapor.html')
+    if 'istek' in request.GET.keys():
+        if request.GET['istek'] == 'deg_tumu':
+            # TODO: Implement all MamulDegisiklik
+            return render(request, 'dashboard/mamulrapor.html')
+        elif request.GET['istek'] == 'son_tumu':
+            # TODO: Implement all MamulSonDurum
+            return render(request, 'dashboard/mamulrapor.html')
+    elif 'tarih' in request.GET.keys():
+        pass
+    mamul_son_degisiklikler = MamulDegisiklik.objects.order_by('-id')[:10]
+    mamul_son_son_durum = MamulSonDurum.objects.order_by('-id')[:10]
+    return render(request, 'dashboard/mamulrapor.html', {'mamul_son_degisiklikler': mamul_son_degisiklikler, 'mamul_son_son_durum': mamul_son_son_durum})
 
 @login_required
 def hammadderapor(request):
