@@ -378,7 +378,7 @@ def create_update_mamulsondurum_from_mamuldegisiklik(sender, instance, **kwargs)
                     raise IntegrityError
                 if required_dict[instance.numara] == 0:
                     del required_dict[instance.numara]
-                vars(modified_record)[instance.mamul_model] = json.dumps({i:required_dict[i] for i in sorted(list(required_dict.keys()), key=lambda x: int(x))})  # Should this be here or on views???
+                vars(modified_record)[instance.mamul_model] = json.dumps({i:required_dict[i] for i in sorted(required_dict.keys(), key=lambda x: int(x))})  # Should this be here or on views???
                 modified_record.save()
             except json.decoder.JSONDecodeError:
                 if instance.adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
@@ -400,7 +400,7 @@ def create_update_mamulsondurum_from_mamuldegisiklik(sender, instance, **kwargs)
                     raise IntegrityError
                 if required_dict[instance.numara] == 0:
                     del required_dict[instance.numara]
-                vars(new_record)[instance.mamul_model] = json.dumps({i:required_dict[i] for i in sorted(list(required_dict.keys()), key=lambda x: int(x))})  # Should this be here or on views???
+                vars(new_record)[instance.mamul_model] = json.dumps({i:required_dict[i] for i in sorted(required_dict.keys(), key=lambda x: int(x))})  # Should this be here or on views???
                 new_record.save()
             except json.decoder.JSONDecodeError:
                 if instance.adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
