@@ -343,6 +343,12 @@ class MyModelForm(forms.ModelForm):
         for _, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
+class MyForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(MyForm, self).__init__(*args, **kwargs)
+        for _, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+
 class MamulDegisiklikForm(MyModelForm):
     notlar = forms.CharField(widget=forms.Textarea, required=False)
     
@@ -360,6 +366,14 @@ class HammaddeDegisiklikForm(MyModelForm):
     class Meta:
         model = HammaddeDegisiklik
         exclude=('kullanici',)
+
+class MamulRestockForm(MyForm):
+    MAMUL_SECENEKLERI = MamulDegisiklik.MAMUL_SECENEKLERI
+    NUMARA_SECENEKLERI = MamulDegisiklik.NUMARA_SECENEKLERI
+    
+    mamul_model = forms.ChoiceField(choices=MAMUL_SECENEKLERI, label='Model')
+    numara = forms.ChoiceField(choices=NUMARA_SECENEKLERI)
+    adet = forms.IntegerField(label='Çift adedi', min_value=0)
 
 # Django sinyaller:
 

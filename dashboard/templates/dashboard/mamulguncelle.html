@@ -1,0 +1,72 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load dashboard_filters %}
+{% block title %}Mamul Stok Güncelle{% endblock %}
+{% block icon %}pe-7s-ticket icon-gradient bg-happy-itmeo{% endblock %}
+{% block pagetitle %}Mamul Stok Güncelle{% endblock %}
+{% block pagesubtitle %}Bu sayfadan mamul stoğu güncellemesi yapılır. Buraya gireceğiniz veriler stoktaki son durumu temsil eder. Ekleme veya çıkarma yapmak için lütfen <a href="{% url 'dashboard:mamuleklecikar' %}">Mamul Ekle / Çıkar</a> sayfasından işlem yapın.{% endblock %}
+{% block content %}
+<div class="mb-3 card">
+    <div class="card-body">
+        <h5 class="card-title">Mamul Stok Güncelle</h5>
+        <form method="POST">
+            {% csrf_token %}
+            {{ formset.management_form }}
+            <table class="mb-0 table table-borderless">
+                <thead>
+                    <tr>
+                        {% for field in formset.empty_form %}
+                        <th>{{ field.label }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody id="formlar">
+                    {% for form in formset %}
+                    <tr id="formrow{{ forloop.counter0 }}">
+                        {% for field in form %}
+                        <td>{{ field }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="button" class="ml-2 btn btn-success btn-lg" id="addmore">Satır Ekle</button>
+            <button type="button" class="ml-2 btn btn-danger btn-lg" id="deleterow">Satır Sil</button>
+            <button type="submit" class="ml-2 btn btn-primary btn-lg">Tümünü Kaydet</button>
+            <!-- <div class="divider"></div> -->
+        </form>
+        <div id="emptyform" style="display: none;">
+            <tr>
+                {% for field in formset.empty_form %}
+                <td>{{ field }}</td>
+                {% endfor %}
+                <td><button type="button" class="btn btn-danger btn-lg">Sil</button></td>
+            </tr>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extrascript %}
+<script type="text/javascript">
+// from: https://simpleit.rocks/python/django/dynamic-add-form-with-add-button-in-django-modelformset-template/
+$('#addmore').click(function() {
+	var form_idx = $('#id_form-TOTAL_FORMS').val();
+    var new_form_html = `
+        <tr id="formrow__prefix__">
+        {% for field in formset.empty_form %}
+            <td>{{ field }}</td>
+        {% endfor %}
+        </tr>`;
+	$('#formlar').append(new_form_html.replace(/__prefix__/g, form_idx));
+	$('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+});
+
+$('#deleterow').click(function() {
+    var form_idx = parseInt($('#id_form-TOTAL_FORMS').val()) - 1;
+    if (form_idx !== 0) {
+        $('#formrow' + String(form_idx)).remove();
+        $('#id_form-TOTAL_FORMS').val(parseInt(form_idx));
+    }
+});
+</script>
+{% endblock %}

@@ -1,11 +1,12 @@
 import os
+from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.utils.datastructures import MultiValueDictKeyError
-from api.models import MamulDegisiklikForm, MamulDegisiklik, HammaddeDegisiklikForm, HammaddeDegisiklik, MamulSonDurum, HammaddeSonDurum
+from api.models import MamulDegisiklikForm, MamulDegisiklik, HammaddeDegisiklikForm, HammaddeDegisiklik, MamulSonDurum, HammaddeSonDurum, MamulRestockForm
 from .models import AccountFormU, AccountFormP
 from tsp_prj.settings import BASE_DIR
 
@@ -25,6 +26,10 @@ def anasayfa(request):
     return render(request, 'dashboard/anasayfa.html', {'title': 'Dashboard'})
 
 @login_required
+def arama(request):
+    return render(request, 'dashboard/arama.html', {'q': request.GET['q']})
+
+@login_required
 def hesap(request):
     loggedin_user = User.objects.get(pk=request.user.id)
     if request.method == 'POST':
@@ -42,7 +47,7 @@ def hesap(request):
     return render(request, 'dashboard/hesap.html', {'formu': formu, 'formp': formp})
 
 @login_required
-def mamul(request):
+def mamuleklecikar(request):
     son_on = MamulDegisiklik.objects.select_related('kullanici__profile').order_by('-id')[:10]
     if request.method == 'POST':
         form = MamulDegisiklikForm(request.POST)
@@ -54,34 +59,12 @@ def mamul(request):
                 mamul_degisiklik_obj.kullanici_id = request.user.id
                 mamul_degisiklik_obj.save()
                 messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
-                return redirect('dashboard:mamul')
+                return redirect('dashboard:mamuleklecikar')
             except IntegrityError:
                 messages.add_message(request, messages.ERROR, 'Veritabanına geçersiz girdi yapmaya çalıştınız. Stokta var olandan daha fazla malzemeyi çıktı gibi göstermeye çalışıyor olabilirsiniz. Girdiğiniz verileri gözden geçirin.')
     elif request.method == 'GET':
         form = MamulDegisiklikForm()
-    return render(request, 'dashboard/mamul.html', {'form': form, 'son_on': son_on})
-
-@login_required
-def hammadde(request):
-    son_on = HammaddeDegisiklik.objects.select_related('kullanici__profile').order_by('-id')[:10]
-    if request.method == 'POST':
-        form = HammaddeDegisiklikForm(request.POST)
-        if form.is_valid():
-            try:
-                hammadde_degisiklik_obj = form.save(commit=False)
-                hammadde_degisiklik_obj.kullanici_id = request.user.id
-                hammadde_degisiklik_obj.save()
-                messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
-                return redirect('dashboard:hammadde')
-            except IntegrityError:
-                messages.add_message(request, messages.ERROR, 'Veritabanına geçersiz girdi yapmaya çalıştınız. Stokta var olandan daha fazla malzemeyi çıktı gibi göstermeye çalışıyor olabilirsiniz. Girdiğiniz verileri gözden geçirin.')
-    elif request.method == 'GET':
-        form = HammaddeDegisiklikForm()
-    return render(request, 'dashboard/hammadde.html', {'form': form, 'son_on': son_on})
-
-@login_required
-def arama(request):
-    return render(request, 'dashboard/arama.html', {'q': request.GET['q']})
+    return render(request, 'dashboard/mamuleklecikar.html', {'form': form, 'son_on': son_on})
 
 @login_required
 def mamulrapor(request):
@@ -99,5 +82,38 @@ def mamulrapor(request):
     return render(request, 'dashboard/mamulrapor.html', {'mamul_son_degisiklikler': mamul_son_degisiklikler, 'mamul_son_son_durum': mamul_son_son_durum})
 
 @login_required
+def mamulguncelle(request):
+    MamulRestockFormset = forms.formset_factory(MamulRestockForm)
+    if request.method == 'POST':
+        formset = MamulRestockFormset(request.POST)
+    elif request.method == 'GET':
+        formset = MamulRestockFormset()
+    return render(request, 'dashboard/mamulguncelle.html', {'formset': formset})
+
+@login_required
+def hammaddeeklecikar(request):
+    son_on = HammaddeDegisiklik.objects.select_related('kullanici__profile').order_by('-id')[:10]
+    if request.method == 'POST':
+        form = HammaddeDegisiklikForm(request.POST)
+        if form.is_valid():
+            try:
+                hammadde_degisiklik_obj = form.save(commit=False)
+                hammadde_degisiklik_obj.kullanici_id = request.user.id
+                hammadde_degisiklik_obj.save()
+                messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
+                return redirect('dashboard:hammaddeeklecikar')
+            except IntegrityError:
+                messages.add_message(request, messages.ERROR, 'Veritabanına geçersiz girdi yapmaya çalıştınız. Stokta var olandan daha fazla malzemeyi çıktı gibi göstermeye çalışıyor olabilirsiniz. Girdiğiniz verileri gözden geçirin.')
+    elif request.method == 'GET':
+        form = HammaddeDegisiklikForm()
+    return render(request, 'dashboard/hammaddeeklecikar.html', {'form': form, 'son_on': son_on})
+
+@login_required
 def hammadderapor(request):
+    # TODO: Implement this.
     return render(request, 'dashboard/hammadderapor.html')
+
+@login_required
+def hammaddeguncelle(request):
+    # TODO: Implement this.
+    pass

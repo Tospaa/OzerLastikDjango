@@ -201,13 +201,13 @@
                             </li>
                             <li class="app-sidebar__heading">Kayıt</li>
                             <li>
-                                <a href="{% url 'dashboard:mamul' %}" {% if request.resolver_match.url_name == 'mamul' %}class="mm-active"{% endif %}>
+                                <a href="{% url 'dashboard:mamuleklecikar' %}" {% if request.resolver_match.url_name == 'mamuleklecikar' %}class="mm-active"{% endif %}>
                                     <i class="metismenu-icon pe-7s-ticket"></i>
                                     Mamul Ekle / Çıkar
                                 </a>
                             </li>
                             <li>
-                                <a href="{% url 'dashboard:hammadde' %}" {% if request.resolver_match.url_name == 'hammadde' %}class="mm-active"{% endif %}>
+                                <a href="{% url 'dashboard:hammaddeeklecikar' %}" {% if request.resolver_match.url_name == 'hammaddeeklecikar' %}class="mm-active"{% endif %}>
                                     <i class="metismenu-icon pe-7s-box2"></i>
                                     Hammadde Ekle / Çıkar
                                 </a>
@@ -314,6 +314,7 @@
         </div>
     </div>
     <script type="text/javascript" src="{% static "dashboard/scripts/main.js" %}"></script>
+    <script type="text/javascript" src="{% static "dashboard/scripts/jquery-3.4.1.min.js" %}"></script>
     <script type="text/javascript">
         searchButtonClicked = function() {
             if (document.getElementById('search-div').getAttribute('class') == 'search-wrapper active') {

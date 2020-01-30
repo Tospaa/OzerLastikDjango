@@ -23,8 +23,10 @@ urlpatterns = [
     path('iletisim/', views.iletisim, name='iletisim'),
     path('lisans/', views.lisans, name='lisans'),
     path('hesap/', views.hesap, name='hesap'),
-    path('mamul/', views.mamul, name='mamul'),
-    path('hammadde/', views.hammadde, name='hammadde'),
+    path('mamuleklecikar/', views.mamuleklecikar, name='mamuleklecikar'),
     path('mamulrapor/', views.mamulrapor, name='mamulrapor'),
+    path('mamulguncelle/', views.mamulguncelle, name='mamulguncelle'),
+    path('hammaddeeklecikar/', views.hammaddeeklecikar, name='hammaddeeklecikar'),
     path('hammadderapor/', views.hammadderapor, name='hammadderapor'),
+    path('hammaddeguncelle/', views.hammaddeguncelle, name='hammaddeguncelle'),
 ]
