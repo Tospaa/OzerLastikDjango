@@ -24,7 +24,7 @@
                     {% for form in formset %}
                     <tr id="formrow{{ forloop.counter0 }}">
                         {% for field in form %}
-                        <td>{{ field }}</td>
+                        <td>{{ field.errors }}{{ field }}</td>
                         {% endfor %}
                     </tr>
                     {% endfor %}

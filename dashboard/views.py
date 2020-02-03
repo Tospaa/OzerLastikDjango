@@ -1,3 +1,5 @@
+import api.models
+import json
 import os
 from django import forms
 from django.contrib import messages
@@ -5,8 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
-from django.utils.datastructures import MultiValueDictKeyError
-from api.models import MamulDegisiklikForm, MamulDegisiklik, HammaddeDegisiklikForm, HammaddeDegisiklik, MamulSonDurum, HammaddeSonDurum, MamulRestockForm
 from .models import AccountFormU, AccountFormP
 from tsp_prj.settings import BASE_DIR
 
@@ -48,9 +48,9 @@ def hesap(request):
 
 @login_required
 def mamuleklecikar(request):
-    son_on = MamulDegisiklik.objects.select_related('kullanici__profile').order_by('-id')[:10]
+    son_on = api.models.MamulDegisiklik.objects.select_related('kullanici__profile').order_by('-id')[:10]
     if request.method == 'POST':
-        form = MamulDegisiklikForm(request.POST)
+        form = api.models.MamulDegisiklikForm(request.POST)
         if form.is_valid():
             try:
                 # from: https://stackoverflow.com/a/46941862
@@ -63,38 +63,56 @@ def mamuleklecikar(request):
             except IntegrityError:
                 messages.add_message(request, messages.ERROR, 'Veritabanına geçersiz girdi yapmaya çalıştınız. Stokta var olandan daha fazla malzemeyi çıktı gibi göstermeye çalışıyor olabilirsiniz. Girdiğiniz verileri gözden geçirin.')
     elif request.method == 'GET':
-        form = MamulDegisiklikForm()
+        form = api.models.MamulDegisiklikForm()
     return render(request, 'dashboard/mamuleklecikar.html', {'form': form, 'son_on': son_on})
 
 @login_required
 def mamulrapor(request):
     if 'istek' in request.GET.keys():
         if request.GET['istek'] == 'deg_tumu':
-            # TODO: Implement all MamulDegisiklik
+            # TODO: Implement all api.models.MamulDegisiklik
             return render(request, 'dashboard/mamulrapor.html')
         elif request.GET['istek'] == 'son_tumu':
-            # TODO: Implement all MamulSonDurum
+            # TODO: Implement all api.models.MamulSonDurum
             return render(request, 'dashboard/mamulrapor.html')
     elif 'tarih' in request.GET.keys():
         pass
-    mamul_son_degisiklikler = MamulDegisiklik.objects.order_by('-id')[:10]
-    mamul_son_son_durum = MamulSonDurum.objects.order_by('-id')[:10]
+    elif 'detay' in request.GET.keys():
+        pass
+    mamul_son_degisiklikler = api.models.MamulDegisiklik.objects.order_by('-id')[:10]
+    mamul_son_son_durum = api.models.MamulSonDurum.objects.order_by('-id')[:10]
     return render(request, 'dashboard/mamulrapor.html', {'mamul_son_degisiklikler': mamul_son_degisiklikler, 'mamul_son_son_durum': mamul_son_son_durum})
 
 @login_required
 def mamulguncelle(request):
-    MamulRestockFormset = forms.formset_factory(MamulRestockForm)
+    api.models.MamulRestockFormset = forms.formset_factory(api.models.MamulRestockForm)
     if request.method == 'POST':
-        formset = MamulRestockFormset(request.POST)
+        formset = api.models.MamulRestockFormset(request.POST)
+        if formset.is_valid():
+            for form in formset:
+                try:
+                    record = api.models.MamulSonDurum.objects.latest('tarih')
+                    new_value = form.cleaned_data['adet'] - json.loads(vars(record)[form.cleaned_data['mamul_model']])[form.cleaned_data['numara']]
+                except (KeyError, json.decoder.JSONDecodeError, api.models.MamulSonDurum.DoesNotExist):
+                    new_value = form.cleaned_data['adet']
+                api.models.MamulDegisiklik.objects.create(
+                    mamul_model=form.cleaned_data['mamul_model'],
+                    numara=form.cleaned_data['numara'],
+                    adet=new_value,
+                    notlar='Bu değişiklik Mamül Güncelleme ekranından yapılmıştır.',
+                    kullanici=request.user
+                )
+            messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
+            return redirect('dashboard:mamulguncelle')
     elif request.method == 'GET':
-        formset = MamulRestockFormset()
+        formset = api.models.MamulRestockFormset()
     return render(request, 'dashboard/mamulguncelle.html', {'formset': formset})
 
 @login_required
 def hammaddeeklecikar(request):
-    son_on = HammaddeDegisiklik.objects.select_related('kullanici__profile').order_by('-id')[:10]
+    son_on = api.models.HammaddeDegisiklik.objects.select_related('kullanici__profile').order_by('-id')[:10]
     if request.method == 'POST':
-        form = HammaddeDegisiklikForm(request.POST)
+        form = api.models.HammaddeDegisiklikForm(request.POST)
         if form.is_valid():
             try:
                 hammadde_degisiklik_obj = form.save(commit=False)
@@ -105,7 +123,7 @@ def hammaddeeklecikar(request):
             except IntegrityError:
                 messages.add_message(request, messages.ERROR, 'Veritabanına geçersiz girdi yapmaya çalıştınız. Stokta var olandan daha fazla malzemeyi çıktı gibi göstermeye çalışıyor olabilirsiniz. Girdiğiniz verileri gözden geçirin.')
     elif request.method == 'GET':
-        form = HammaddeDegisiklikForm()
+        form = api.models.HammaddeDegisiklikForm()
     return render(request, 'dashboard/hammaddeeklecikar.html', {'form': form, 'son_on': son_on})
 
 @login_required
