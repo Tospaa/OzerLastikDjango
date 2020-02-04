@@ -1,14 +1,14 @@
 {% extends "dashboard/base.html" %}
 {% load static %}
 {% load dashboard_filters %}
-{% block title %}Mamul Stok Güncelle{% endblock %}
+{% block title %}Koli Stok Güncelle{% endblock %}
 {% block icon %}pe-7s-ticket icon-gradient bg-happy-itmeo{% endblock %}
-{% block pagetitle %}Mamul Stok Güncelle{% endblock %}
-{% block pagesubtitle %}Bu sayfadan mamul stoğu güncellemesi yapılır. Buraya gireceğiniz veriler stoktaki son durumu temsil eder. Ekleme veya çıkarma yapmak için lütfen <a href="{% url 'dashboard:mamuleklecikar' %}">Mamul Ekle / Çıkar</a> sayfasından işlem yapın.{% endblock %}
+{% block pagetitle %}Koli Stok Güncelle{% endblock %}
+{% block pagesubtitle %}Bu sayfadan koli stoğu güncellemesi yapılır. Buraya gireceğiniz veriler stoktaki son durumu temsil eder. Ekleme veya çıkarma yapmak için lütfen <a href="{% url 'dashboard:kolieklecikar' %}">Koli Ekle / Çıkar</a> sayfasından işlem yapın.{% endblock %}
 {% block content %}
 <div class="mb-3 card">
     <div class="card-body">
-        <h5 class="card-title">Mamul Stok Güncelle</h5>
+        <h5 class="card-title">Koli Stok Güncelle</h5>
         <form method="POST">
             {% csrf_token %}
             {{ formset.management_form }}

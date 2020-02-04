@@ -1,16 +1,16 @@
 {% extends "dashboard/base.html" %}
 {% load static %}
 {% load dashboard_filters %}
-{% block title %}Mamul Ekle/Çıkar{% endblock %}
+{% block title %}Koli Ekle/Çıkar{% endblock %}
 {% block icon %}pe-7s-ticket icon-gradient bg-happy-itmeo{% endblock %}
-{% block pagetitle %}Mamul Ekle/Çıkar{% endblock %}
-{% block pagesubtitle %}Bu sayfadan stok içeriğine mamul eklemesi ve çıkarması yapılır. {% endblock %}
+{% block pagetitle %}Koli Ekle/Çıkar{% endblock %}
+{% block pagesubtitle %}Bu sayfadan stok içeriğine koli eklemesi ve çıkarması yapılır. {% endblock %}
 {% block content %}
 <div class="row">
     <div class="col-md-12 col-lg-6">
         <div class="mb-3 card">
             <div class="card-body">
-                <h5 class="card-title">Mamul Ekle / Çıkar</h5>
+                <h5 class="card-title">Koli Ekle / Çıkar</h5>
                 <form method="POST">
                     {% csrf_token %}
                     {{ form.as_p }}
@@ -22,7 +22,7 @@
     <div class="col-md-12 col-lg-6">
         <div class="mb-3 card">
             <div class="card-body">
-                <h5 class="card-title">Son 10 Mamul Girdi / Çıktı İşlemi</h5>
+                <h5 class="card-title">Son 10 Koli Girdi / Çıktı İşlemi</h5>
                 <div class="scroll-area-lg">
                     <div class="scrollbar-container">
                         <ul class="rm-list-borders rm-list-borders-scroll list-group list-group-flush">

@@ -47,27 +47,27 @@ def hesap(request):
     return render(request, 'dashboard/hesap.html', {'formu': formu, 'formp': formp})
 
 @login_required
-def mamuleklecikar(request):
-    son_on = api.models.MamulDegisiklik.objects.select_related('kullanici__profile').order_by('-id')[:10]
+def kolieklecikar(request):
+    son_on = api.models.KoliDegisiklik.objects.select_related('kullanici__profile').order_by('-id')[:10]
     if request.method == 'POST':
-        form = api.models.MamulDegisiklikForm(request.POST)
+        form = api.models.KoliDegisiklikForm(request.POST)
         if form.is_valid():
             try:
                 # from: https://stackoverflow.com/a/46941862
                 #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ THANK YOU SO MUCH!!!
-                mamul_degisiklik_obj = form.save(commit=False)
-                mamul_degisiklik_obj.kullanici_id = request.user.id
-                mamul_degisiklik_obj.save()
+                koli_degisiklik_obj = form.save(commit=False)
+                koli_degisiklik_obj.kullanici_id = request.user.id
+                koli_degisiklik_obj.save()
                 messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
-                return redirect('dashboard:mamuleklecikar')
+                return redirect('dashboard:kolieklecikar')
             except IntegrityError:
                 messages.add_message(request, messages.ERROR, 'Veritabanına geçersiz girdi yapmaya çalıştınız. Stokta var olandan daha fazla malzemeyi çıktı gibi göstermeye çalışıyor olabilirsiniz. Girdiğiniz verileri gözden geçirin.')
     elif request.method == 'GET':
-        form = api.models.MamulDegisiklikForm()
-    return render(request, 'dashboard/mamuleklecikar.html', {'form': form, 'son_on': son_on})
+        form = api.models.KoliDegisiklikForm()
+    return render(request, 'dashboard/kolieklecikar.html', {'form': form, 'son_on': son_on})
 
 @login_required
-def mamulrapor(request):
+def kolirapor(request):
     if 'istek' in request.GET.keys():
         if request.GET['istek'] == 'deg_tumu':
             # TODO: Implement all api.models.MamulDegisiklik
@@ -79,34 +79,35 @@ def mamulrapor(request):
         pass
     elif 'detay' in request.GET.keys():
         pass
-    mamul_son_degisiklikler = api.models.MamulDegisiklik.objects.order_by('-id')[:10]
-    mamul_son_son_durum = api.models.MamulSonDurum.objects.order_by('-id')[:10]
-    return render(request, 'dashboard/mamulrapor.html', {'mamul_son_degisiklikler': mamul_son_degisiklikler, 'mamul_son_son_durum': mamul_son_son_durum})
+    koli_son_degisiklikler = api.models.KoliDegisiklik.objects.order_by('-id')[:10]
+    koli_son_son_durum = api.models.KoliSonDurum.objects.order_by('-id')[:10]
+    return render(request, 'dashboard/kolirapor.html', {'koli_son_degisiklikler': koli_son_degisiklikler, 'koli_son_son_durum': koli_son_son_durum})
 
 @login_required
-def mamulguncelle(request):
-    api.models.MamulRestockFormset = forms.formset_factory(api.models.MamulRestockForm)
+def koliguncelle(request):
+    api.models.KoliRestockFormset = forms.formset_factory(api.models.KoliRestockForm)
     if request.method == 'POST':
-        formset = api.models.MamulRestockFormset(request.POST)
+        formset = api.models.KoliRestockFormset(request.POST)
         if formset.is_valid():
             for form in formset:
                 try:
-                    record = api.models.MamulSonDurum.objects.latest('tarih')
-                    new_value = form.cleaned_data['adet'] - json.loads(vars(record)[form.cleaned_data['mamul_model']])[form.cleaned_data['numara']]
-                except (KeyError, json.decoder.JSONDecodeError, api.models.MamulSonDurum.DoesNotExist):
+                    record = api.models.KoliSonDurum.objects.latest('tarih')
+                    new_value = form.cleaned_data['adet'] - json.loads(vars(record)[form.cleaned_data['mamul_model']])[form.cleaned_data['kalite']][form.cleaned_data['koli']]
+                except (KeyError, json.decoder.JSONDecodeError, api.models.KoliSonDurum.DoesNotExist):
                     new_value = form.cleaned_data['adet']
-                api.models.MamulDegisiklik.objects.create(
+                api.models.KoliDegisiklik.objects.create(
+                    koli=form.cleaned_data['koli'],
                     mamul_model=form.cleaned_data['mamul_model'],
-                    numara=form.cleaned_data['numara'],
+                    kalite=form.cleaned_data['kalite'],
                     adet=new_value,
-                    notlar='Bu değişiklik Mamül Güncelleme ekranından yapılmıştır.',
+                    notlar='Bu değişiklik Koli Güncelleme ekranından yapılmıştır.',
                     kullanici=request.user
                 )
             messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
-            return redirect('dashboard:mamulguncelle')
+            return redirect('dashboard:koliguncelle')
     elif request.method == 'GET':
-        formset = api.models.MamulRestockFormset()
-    return render(request, 'dashboard/mamulguncelle.html', {'formset': formset})
+        formset = api.models.KoliRestockFormset()
+    return render(request, 'dashboard/koliguncelle.html', {'formset': formset})
 
 @login_required
 def hammaddeeklecikar(request):

@@ -1,3 +1,4 @@
+from dashboard.methodpack import sorting_key
 from django import forms
 from django.contrib.auth.models import User
 from django.db import models, IntegrityError
@@ -7,7 +8,7 @@ import json
 
 # Mamuller:
 
-class MamulSonDurum(models.Model):
+class KoliSonDurum(models.Model):
     tarih = models.DateField(unique=True)
     KrepKisaKonc = models.TextField(blank=True)
     KrepUzunKonc = models.TextField(blank=True)
@@ -31,7 +32,7 @@ class MamulSonDurum(models.Model):
     ElektrikciS4 = models.TextField(blank=True)
     ElektrikciS5 = models.TextField(blank=True)
 
-class MamulDegisiklik(models.Model):
+class KoliDegisiklik(models.Model):
     MAMUL_SECENEKLERI = [
         ('Krep Çizme', (
                 ('KrepKisaKonc', 'Krep Kısa Konç'),
@@ -65,59 +66,13 @@ class MamulDegisiklik(models.Model):
         ),
     ]
     
-    NUMARA_SECENEKLERI = [
-        ('8', '8'),
-        ('9', '9'),
-        ('10', '10'),
-        ('11', '11'),
-        ('12', '12'),
-        ('13', '13'),
-        ('14', '14'),
-        ('15', '15'),
-        ('16', '16'),
-        ('17', '17'),
-        ('18', '18'),
-        ('19', '19'),
-        ('20', '20'),
-        ('21', '21'),
-        ('22', '22'),
-        ('23', '23'),
-        ('24', '24'),
-        ('25', '25'),
-        ('26', '26'),
-        ('27', '27'),
-        ('28', '28'),
-        ('29', '29'),
-        ('30', '30'),
-        ('31', '31'),
-        ('32', '32'),
-        ('33', '33'),
-        ('34', '34'),
-        ('35', '35'),
-        ('36', '36'),
-        ('37', '37'),
-        ('38', '38'),
-        ('39', '39'),
-        ('40', '40'),
-        ('41', '41'),
-        ('42', '42'),
-        ('43', '43'),
-        ('44', '44'),
-        ('45', '45'),
-        ('46', '46'),
-        ('47', '47'),
-        ('48', '48'),
-        ('49', '49'),
-        ('50', '50')
-    ]
-    
     KALITE_SECENEKLERI = [
         ('1', '1'),
         ('2', '2')
     ]
     
+    koli = models.CharField(max_length=8)
     mamul_model = models.CharField(max_length=32, choices=MAMUL_SECENEKLERI)
-    numara = models.CharField(max_length=2, choices=NUMARA_SECENEKLERI)
     kalite = models.CharField(max_length=1, choices=KALITE_SECENEKLERI, default='1')
     adet = models.IntegerField()
     notlar = models.CharField(max_length=256, blank=True)
@@ -355,15 +310,15 @@ class MyForm(forms.Form):
         for _, field in self.fields.items():
             field.widget.attrs['class'] = 'form-control'
 
-class MamulDegisiklikForm(MyModelForm):
+class KoliDegisiklikForm(MyModelForm):
     notlar = forms.CharField(widget=forms.Textarea, required=False)
     
     class Meta:
-        model = MamulDegisiklik
-        exclude=('kullanici',)
+        model = KoliDegisiklik
+        exclude = ('kullanici',)
         labels = {
+            'koli': 'Koli Türü',
             'mamul_model': 'Model',
-            'adet': 'Çift adedi'
         }
 
 class HammaddeDegisiklikForm(MyModelForm):
@@ -371,66 +326,69 @@ class HammaddeDegisiklikForm(MyModelForm):
     
     class Meta:
         model = HammaddeDegisiklik
-        exclude=('kullanici',)
+        exclude = ('kullanici',)
 
-class MamulRestockForm(MyForm):
-    MAMUL_SECENEKLERI = MamulDegisiklik.MAMUL_SECENEKLERI
-    NUMARA_SECENEKLERI = MamulDegisiklik.NUMARA_SECENEKLERI
-    KALITE_SECENEKLERI = MamulDegisiklik.KALITE_SECENEKLERI
+class KoliRestockForm(MyForm):
+    MAMUL_SECENEKLERI = KoliDegisiklik.MAMUL_SECENEKLERI
+    KALITE_SECENEKLERI = KoliDegisiklik.KALITE_SECENEKLERI
     
+    koli = forms.CharField(max_length=8, label='Koli Türü')
     mamul_model = forms.ChoiceField(choices=MAMUL_SECENEKLERI, label='Model')
-    numara = forms.ChoiceField(choices=NUMARA_SECENEKLERI)
     kalite = forms.ChoiceField(choices=KALITE_SECENEKLERI)
-    adet = forms.IntegerField(label='Çift adedi', min_value=0)
+    adet = forms.IntegerField(min_value=0)
 
 # Django sinyaller:
 
-@receiver(models.signals.pre_save, sender=MamulDegisiklik)
-def create_update_mamulsondurum_from_mamuldegisiklik(sender, instance, **kwargs):
+@receiver(models.signals.pre_save, sender=KoliDegisiklik)
+def create_update_kolisondurum_from_kolidegisiklik(sender, instance, **kwargs):
     try:
-        selected_record = MamulSonDurum()
-        if MamulSonDurum.objects.filter(tarih=timezone.localtime(timezone.now()).date()).exists():
-            modified_record = MamulSonDurum.objects.get(tarih=timezone.localtime(timezone.now()).date())
+        selected_record = KoliSonDurum()
+        if KoliSonDurum.objects.filter(tarih=timezone.localtime(timezone.now()).date()).exists():
+            modified_record = KoliSonDurum.objects.get(tarih=timezone.localtime(timezone.now()).date())
             selected_record = modified_record
         else:
-            new_record = MamulSonDurum.objects.latest('tarih')  # raises exception MamulSonDurum.DoesNotExist
+            new_record = KoliSonDurum.objects.latest('tarih')  # raises exception KoliSonDurum.DoesNotExist
             new_record.pk = None  # Primary Key değerini sil ki güncelleme yerine yeni kayıt girdisi yapılsın
             new_record.tarih = timezone.now().date()
             selected_record = new_record
         raw_data = json.loads(vars(selected_record)[instance.mamul_model])  # raises exception json.decoder.JSONDecodeError
         required_dict = raw_data[instance.kalite]  # raises exception KeyError
-        try:
-            required_dict[instance.numara] += instance.adet  # raises exception KeyError
-        except KeyError:
-            # Bu numaraya ait daha önce bir girdi yapılmamış demektir.
-            required_dict[instance.numara] = instance.adet
-        if required_dict[instance.numara] < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
+        if instance.koli in required_dict.keys():
+            required_dict[instance.koli] += instance.adet
+        else:
+            print('1 key error')
+            # Bu koli türüne ait daha önce bir girdi yapılmamış demektir.
+            required_dict[instance.koli] = instance.adet
+        if required_dict[instance.koli] < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
             raise IntegrityError
-        if required_dict[instance.numara] == 0:
-            del required_dict[instance.numara]
-        raw_data[instance.kalite] = {i:required_dict[i] for i in sorted(required_dict.keys(), key=lambda x: int(x))}  # Should this be here or on views???
+        if required_dict[instance.koli] == 0:
+            del required_dict[instance.koli]
+        raw_data[instance.kalite] = {i:required_dict[i] for i in sorted(required_dict.keys(), key=lambda x: sorting_key(x))}  # Should this be here or on views???
         vars(selected_record)[instance.mamul_model] = json.dumps(raw_data)
         selected_record.save()
     except KeyError:
+        print('2 key error')
         # Bu kaliteye ait daha önce bir girdi yapılmamış demektir.
         raw_data = json.loads(vars(selected_record)[instance.mamul_model])
         if instance.adet <= 0:
             raise IntegrityError
-        raw_data[instance.kalite] = {instance.numara: instance.adet}
+        raw_data[instance.kalite] = {instance.koli: instance.adet}
         vars(selected_record)[instance.mamul_model] = json.dumps(raw_data)
         selected_record.save()
     except json.decoder.JSONDecodeError:
+        print('json error')
         # Bu modele ait daha önce bir girdi yapılmamış demektir.
         if instance.adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
             raise IntegrityError
-        vars(selected_record)[instance.mamul_model] = json.dumps({instance.numara: instance.adet})
+        vars(selected_record)[instance.mamul_model] = json.dumps({instance.kalite: {instance.koli: instance.adet}})
         selected_record.save()
-    except MamulSonDurum.DoesNotExist:
-        # Veritabanında hiç mamul son durum girdisi yok demektir. Bu kısım, ideal olarak, sadece bir kez çalışacak.
-        first_record = MamulSonDurum(tarih=timezone.now().date())
+    except KoliSonDurum.DoesNotExist:
+        print('does not exist error')
+        # Veritabanında hiç koli son durum girdisi yok demektir. Bu kısım, ideal olarak, sadece bir kez çalışacak.
+        first_record = KoliSonDurum(tarih=timezone.now().date())
         if instance.adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
             raise IntegrityError
-        vars(first_record)[instance.mamul_model] = json.dumps({instance.kalite: {instance.numara: instance.adet}})
+        vars(first_record)[instance.mamul_model] = json.dumps({instance.kalite: {instance.koli: instance.adet}})
         first_record.save()
 
 @receiver(models.signals.pre_save, sender=HammaddeDegisiklik)
