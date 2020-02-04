@@ -111,8 +111,14 @@ class MamulDegisiklik(models.Model):
         ('50', '50')
     ]
     
+    KALITE_SECENEKLERI = [
+        ('1', '1'),
+        ('2', '2')
+    ]
+    
     mamul_model = models.CharField(max_length=32, choices=MAMUL_SECENEKLERI)
     numara = models.CharField(max_length=2, choices=NUMARA_SECENEKLERI)
+    kalite = models.CharField(max_length=1, choices=KALITE_SECENEKLERI, default='1')
     adet = models.IntegerField()
     notlar = models.CharField(max_length=256, blank=True)
     tarih = models.DateTimeField(auto_now_add=True)
@@ -370,9 +376,11 @@ class HammaddeDegisiklikForm(MyModelForm):
 class MamulRestockForm(MyForm):
     MAMUL_SECENEKLERI = MamulDegisiklik.MAMUL_SECENEKLERI
     NUMARA_SECENEKLERI = MamulDegisiklik.NUMARA_SECENEKLERI
+    KALITE_SECENEKLERI = MamulDegisiklik.KALITE_SECENEKLERI
     
     mamul_model = forms.ChoiceField(choices=MAMUL_SECENEKLERI, label='Model')
     numara = forms.ChoiceField(choices=NUMARA_SECENEKLERI)
+    kalite = forms.ChoiceField(choices=KALITE_SECENEKLERI)
     adet = forms.IntegerField(label='Çift adedi', min_value=0)
 
 # Django sinyaller:
@@ -380,53 +388,49 @@ class MamulRestockForm(MyForm):
 @receiver(models.signals.pre_save, sender=MamulDegisiklik)
 def create_update_mamulsondurum_from_mamuldegisiklik(sender, instance, **kwargs):
     try:
+        selected_record = MamulSonDurum()
         if MamulSonDurum.objects.filter(tarih=timezone.localtime(timezone.now()).date()).exists():
             modified_record = MamulSonDurum.objects.get(tarih=timezone.localtime(timezone.now()).date())
-            try:
-                required_dict = json.loads(vars(modified_record)[instance.mamul_model])
-                try:
-                    required_dict[instance.numara] += instance.adet
-                except KeyError:
-                    required_dict[instance.numara] = instance.adet
-                if required_dict[instance.numara] < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
-                    raise IntegrityError
-                if required_dict[instance.numara] == 0:
-                    del required_dict[instance.numara]
-                vars(modified_record)[instance.mamul_model] = json.dumps({i:required_dict[i] for i in sorted(required_dict.keys(), key=lambda x: int(x))})  # Should this be here or on views???
-                modified_record.save()
-            except json.decoder.JSONDecodeError:
-                if instance.adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
-                    raise IntegrityError
-                vars(modified_record)[instance.mamul_model] = json.dumps({instance.numara: instance.adet})
-                modified_record.save()
+            selected_record = modified_record
         else:
-            new_record = MamulSonDurum.objects.latest('tarih')
-            # Primary Key değerini sil ki güncelleme yerine yeni kayıt girdisi yapılsın
-            new_record.pk = None
+            new_record = MamulSonDurum.objects.latest('tarih')  # raises exception MamulSonDurum.DoesNotExist
+            new_record.pk = None  # Primary Key değerini sil ki güncelleme yerine yeni kayıt girdisi yapılsın
             new_record.tarih = timezone.now().date()
-            try:
-                required_dict = dict(json.loads(vars(new_record)[instance.mamul_model]))
-                try:
-                    required_dict[instance.numara] += instance.adet
-                except KeyError:
-                    required_dict[instance.numara] = instance.adet
-                if required_dict[instance.numara] < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
-                    raise IntegrityError
-                if required_dict[instance.numara] == 0:
-                    del required_dict[instance.numara]
-                vars(new_record)[instance.mamul_model] = json.dumps({i:required_dict[i] for i in sorted(required_dict.keys(), key=lambda x: int(x))})  # Should this be here or on views???
-                new_record.save()
-            except json.decoder.JSONDecodeError:
-                if instance.adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
-                    raise IntegrityError
-                vars(new_record)[instance.mamul_model] = json.dumps({instance.numara: instance.adet})
-                new_record.save()
+            selected_record = new_record
+        raw_data = json.loads(vars(selected_record)[instance.mamul_model])  # raises exception json.decoder.JSONDecodeError
+        required_dict = raw_data[instance.kalite]  # raises exception KeyError
+        try:
+            required_dict[instance.numara] += instance.adet  # raises exception KeyError
+        except KeyError:
+            # Bu numaraya ait daha önce bir girdi yapılmamış demektir.
+            required_dict[instance.numara] = instance.adet
+        if required_dict[instance.numara] < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
+            raise IntegrityError
+        if required_dict[instance.numara] == 0:
+            del required_dict[instance.numara]
+        raw_data[instance.kalite] = {i:required_dict[i] for i in sorted(required_dict.keys(), key=lambda x: int(x))}  # Should this be here or on views???
+        vars(selected_record)[instance.mamul_model] = json.dumps(raw_data)
+        selected_record.save()
+    except KeyError:
+        # Bu kaliteye ait daha önce bir girdi yapılmamış demektir.
+        raw_data = json.loads(vars(selected_record)[instance.mamul_model])
+        if instance.adet <= 0:
+            raise IntegrityError
+        raw_data[instance.kalite] = {instance.numara: instance.adet}
+        vars(selected_record)[instance.mamul_model] = json.dumps(raw_data)
+        selected_record.save()
+    except json.decoder.JSONDecodeError:
+        # Bu modele ait daha önce bir girdi yapılmamış demektir.
+        if instance.adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
+            raise IntegrityError
+        vars(selected_record)[instance.mamul_model] = json.dumps({instance.numara: instance.adet})
+        selected_record.save()
     except MamulSonDurum.DoesNotExist:
-        # Veritabanında hiç mamul son durum girdisi yok demektir.
+        # Veritabanında hiç mamul son durum girdisi yok demektir. Bu kısım, ideal olarak, sadece bir kez çalışacak.
         first_record = MamulSonDurum(tarih=timezone.now().date())
         if instance.adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
             raise IntegrityError
-        vars(first_record)[instance.mamul_model] = json.dumps({instance.numara: instance.adet})
+        vars(first_record)[instance.mamul_model] = json.dumps({instance.kalite: {instance.numara: instance.adet}})
         first_record.save()
 
 @receiver(models.signals.pre_save, sender=HammaddeDegisiklik)
@@ -445,7 +449,7 @@ def create_update_hammaddesondurum_from_hammaddedegisiklik(sender, instance, **k
             vars(new_record)[instance.madde] += instance.miktar
             new_record.save()
     except HammaddeSonDurum.DoesNotExist:
-        # Veritabanında hiç hammadde son durum girdisi yok demektir.
+        # Veritabanında hiç hammadde son durum girdisi yok demektir. Bu kısım, ideal olarak, sadece bir kez çalışacak.
         first_record = HammaddeSonDurum(tarih=timezone.now().date())
         vars(first_record)[instance.madde] = instance.miktar
         first_record.save()
