@@ -15,7 +15,7 @@
                 <tr>
                     <th>Tarih</th>
                     <th>Model</th>
-                    <th>Numara</th>
+                    <th>Koli Türü</th>
                     <th>Adet</th>
                 </tr>
             </thead>
@@ -24,7 +24,7 @@
                 <tr>
                     <th scope="row">{{ degisiklik.tarih|date:'j/n/Y G:i' }}</th>
                     <td>{{ degisiklik.get_mamul_model_display }}</td>
-                    <td>{{ degisiklik.numara }}</td>
+                    <td>{{ degisiklik.koli }}</td>
                     <td>{{ degisiklik.adet }}</td>
                 </tr>
             {% endfor %}
@@ -75,7 +75,7 @@
                         <tr>
                             <th>Tarih</th>
                             <th>Model</th>
-                            <th>Numara</th>
+                            <th>Koli Türü</th>
                             <th>Çift Adedi</th>
                         </tr>
                     </thead>
@@ -84,7 +84,7 @@
                         <tr>
                             <th scope="row">{{ degisiklik.tarih|date:'j/n/Y G:i' }}</th>
                             <td>{{ degisiklik.get_mamul_model_display }}</td>
-                            <td>{{ degisiklik.numara }}</td>
+                            <td>{{ degisiklik.koli }}</td>
                             <td>{{ degisiklik.adet }}</td>
                         </tr>
                     {% endfor %}
