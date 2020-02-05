@@ -63,10 +63,10 @@
             </div>
             <div class="app-header__content">
                 <div class="app-header-left">
-                    <div class="search-wrapper{% if request.resolver_match.url_name == 'arama' %} active{% endif %}" id="search-div">
+                    <div class="search-wrapper{% if request.resolver_match.view_name == 'dashboard:arama' %} active{% endif %}" id="search-div">
                         <div class="input-holder">
                             <form action="{% url 'dashboard:arama' %}">
-                                <input type="text" class="search-input" name="q" placeholder="Arama yap" required{% if request.resolver_match.url_name == 'arama' %} value="{{ q }}"{% endif %}>
+                                <input type="text" class="search-input" name="q" placeholder="Arama yap" required{% if request.resolver_match.view_name == 'dashboard:arama' %} value="{{ q }}"{% endif %}>
                                 <button type="submit" id="search-button" style="display: none;"></button>
                             </form>
                             <button class="search-icon" onclick="searchButtonClicked();"><span></span></button>
@@ -205,6 +205,12 @@
                                 <a href="{% url 'dashboard:kolieklecikar' %}" {% if request.resolver_match.view_name == 'dashboard:kolieklecikar' %}class="mm-active"{% endif %}>
                                     <i class="metismenu-icon pe-7s-ticket"></i>
                                     Koli Ekle / Çıkar
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'dashboard:koliguncelle' %}" {% if request.resolver_match.view_name == 'dashboard:koliguncelle' %}class="mm-active"{% endif %}>
+                                    <i class="metismenu-icon pe-7s-ticket"></i>
+                                    Koli Stok Güncelle
                                 </a>
                             </li>
                             <li>
