@@ -332,7 +332,7 @@ class KoliRestockForm(MyForm):
     MAMUL_SECENEKLERI = KoliDegisiklik.MAMUL_SECENEKLERI
     KALITE_SECENEKLERI = KoliDegisiklik.KALITE_SECENEKLERI
     
-    koli = forms.CharField(max_length=8, label='Koli Türü')
+    koli = forms.CharField(max_length=8, label='Koli Türü', widget=forms.TextInput(attrs={'pattern': '[0-9/]+'}))
     mamul_model = forms.ChoiceField(choices=MAMUL_SECENEKLERI, label='Model')
     kalite = forms.ChoiceField(choices=KALITE_SECENEKLERI)
     adet = forms.IntegerField(min_value=0)

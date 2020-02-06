@@ -1,3 +1,5 @@
+import re
+
 """
 Here lies my static methods.
 Hence the name, methodpack.
@@ -20,3 +22,11 @@ def sorting_key(string_input):
     types right before writing it to the database
     """
     return float(string_input.replace('/', '.'))
+
+def validate_package_type(text):
+    stripped_text = ''.join([i for i in re.findall('[0-9/]+', text)])
+    if stripped_text and re.match(r'^[1-9][0-9]?(?:/[1-9][0-9]?)?$', stripped_text):
+        # d0ru
+        return stripped_text
+    else:
+        raise ValueError(f'Provided package type ({stripped_text}) is incorrect.')
