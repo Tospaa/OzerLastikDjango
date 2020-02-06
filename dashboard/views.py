@@ -53,11 +53,12 @@ def kolieklecikar(request):
         form = api.models.KoliDegisiklikForm(request.POST)
         if form.is_valid():
             try:
-                # from: https://stackoverflow.com/a/46941862
-                #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ THANK YOU SO MUCH!!!
-                koli_degisiklik_obj = form.save(commit=False)
-                koli_degisiklik_obj.kullanici_id = request.user.id
-                koli_degisiklik_obj.save()
+                if form.cleaned_data['adet'] != 0:
+                    # from: https://stackoverflow.com/a/46941862
+                    #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ THANK YOU SO MUCH!!!
+                    koli_degisiklik_obj = form.save(commit=False)
+                    koli_degisiklik_obj.kullanici_id = request.user.id
+                    koli_degisiklik_obj.save()
                 messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
                 return redirect('dashboard:kolieklecikar')
             except IntegrityError:
@@ -95,14 +96,15 @@ def koliguncelle(request):
                     new_value = form.cleaned_data['adet'] - json.loads(vars(record)[form.cleaned_data['mamul_model']])[form.cleaned_data['kalite']][form.cleaned_data['koli']]
                 except (KeyError, json.decoder.JSONDecodeError, api.models.KoliSonDurum.DoesNotExist):
                     new_value = form.cleaned_data['adet']
-                api.models.KoliDegisiklik.objects.create(
-                    koli=form.cleaned_data['koli'],
-                    mamul_model=form.cleaned_data['mamul_model'],
-                    kalite=form.cleaned_data['kalite'],
-                    adet=new_value,
-                    notlar='Bu değişiklik Koli Güncelleme ekranından yapılmıştır.',
-                    kullanici=request.user
-                )
+                if new_value != 0:
+                    api.models.KoliDegisiklik.objects.create(
+                        koli=form.cleaned_data['koli'],
+                        mamul_model=form.cleaned_data['mamul_model'],
+                        kalite=form.cleaned_data['kalite'],
+                        adet=new_value,
+                        notlar='Bu değişiklik Koli Güncelleme ekranından yapılmıştır.',
+                        kullanici=request.user
+                    )
             messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
             return redirect('dashboard:koliguncelle')
     elif request.method == 'GET':
@@ -116,9 +118,10 @@ def hammaddeeklecikar(request):
         form = api.models.HammaddeDegisiklikForm(request.POST)
         if form.is_valid():
             try:
-                hammadde_degisiklik_obj = form.save(commit=False)
-                hammadde_degisiklik_obj.kullanici_id = request.user.id
-                hammadde_degisiklik_obj.save()
+                if form.cleaned_data['adet'] != 0:
+                    hammadde_degisiklik_obj = form.save(commit=False)
+                    hammadde_degisiklik_obj.kullanici_id = request.user.id
+                    hammadde_degisiklik_obj.save()
                 messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
                 return redirect('dashboard:hammaddeeklecikar')
             except IntegrityError:
