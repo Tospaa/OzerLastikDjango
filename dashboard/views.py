@@ -53,12 +53,11 @@ def kolieklecikar(request):
         form = api.models.KoliDegisiklikForm(request.POST)
         if form.is_valid():
             try:
-                if form.cleaned_data['adet'] != 0:
-                    # from: https://stackoverflow.com/a/46941862
-                    #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ THANK YOU SO MUCH!!!
-                    koli_degisiklik_obj = form.save(commit=False)
-                    koli_degisiklik_obj.kullanici_id = request.user.id
-                    koli_degisiklik_obj.save()
+                # from: https://stackoverflow.com/a/46941862
+                #       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ THANK YOU SO MUCH!!!
+                koli_degisiklik_obj = form.save(commit=False)
+                koli_degisiklik_obj.kullanici_id = request.user.id
+                koli_degisiklik_obj.save()
                 messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
                 return redirect('dashboard:kolieklecikar')
             except IntegrityError:
@@ -118,10 +117,9 @@ def hammaddeeklecikar(request):
         form = api.models.HammaddeDegisiklikForm(request.POST)
         if form.is_valid():
             try:
-                if form.cleaned_data['adet'] != 0:
-                    hammadde_degisiklik_obj = form.save(commit=False)
-                    hammadde_degisiklik_obj.kullanici_id = request.user.id
-                    hammadde_degisiklik_obj.save()
+                hammadde_degisiklik_obj = form.save(commit=False)
+                hammadde_degisiklik_obj.kullanici_id = request.user.id
+                hammadde_degisiklik_obj.save()
                 messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
                 return redirect('dashboard:hammaddeeklecikar')
             except IntegrityError:

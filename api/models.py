@@ -71,13 +71,19 @@ class KoliDegisiklik(models.Model):
         ('2', '2')
     ]
     
-    koli = models.CharField(max_length=8)
+    
     mamul_model = models.CharField(max_length=32, choices=MAMUL_SECENEKLERI)
+    koli_turu = models.CharField(max_length=8)
+    kolideki_mamul_adet = models.PositiveIntegerField()
     kalite = models.CharField(max_length=1, choices=KALITE_SECENEKLERI, default='1')
-    adet = models.IntegerField()
+    koli_adet = models.IntegerField()
     notlar = models.CharField(max_length=256, blank=True)
     tarih = models.DateTimeField(auto_now_add=True)
     kullanici = models.ForeignKey(User, on_delete=models.PROTECT)
+    
+    def save(self, *args, **kwargs):
+        if self.koli_adet != 0:
+            super(KoliDegisiklik, self).save(*args, **kwargs)
 
 # Hammaddeler:
 
@@ -293,6 +299,10 @@ class HammaddeDegisiklik(models.Model):
     notlar = models.CharField(max_length=256, blank=True)
     tarih = models.DateTimeField(auto_now_add=True)
     kullanici = models.ForeignKey(User, on_delete=models.PROTECT)
+    
+    def save(self, *args, **kwargs):
+        if self.miktar != 0:
+            super(HammaddeDegisiklik, self).save(*args, **kwargs)
 
 # Formlar:
 
@@ -311,84 +321,123 @@ class MyForm(forms.Form):
             field.widget.attrs['class'] = 'form-control'
 
 class KoliDegisiklikForm(MyModelForm):
-    notlar = forms.CharField(widget=forms.Textarea, required=False)
-    
     class Meta:
         model = KoliDegisiklik
         exclude = ('kullanici',)
         labels = {
-            'koli': 'Koli Türü',
+            'koli_turu': 'Koli Türü',
             'mamul_model': 'Model',
+            'kolideki_mamul_adet': 'Kolideki Mamül Sayısı',
+        }
+        widgets = {
+            'notlar': forms.Textarea(),
+            'koli': forms.TextInput(attrs={
+                'pattern': r'^[1-9][0-9]?(?:/[1-9][0-9]?)?$',
+            }),
         }
 
 class HammaddeDegisiklikForm(MyModelForm):
-    notlar = forms.CharField(widget=forms.Textarea, required=False)
-    
     class Meta:
         model = HammaddeDegisiklik
         exclude = ('kullanici',)
+        widgets = {
+            'notlar': forms.Textarea(),
+        }
 
 class KoliRestockForm(MyForm):
-    MAMUL_SECENEKLERI = KoliDegisiklik.MAMUL_SECENEKLERI
-    KALITE_SECENEKLERI = KoliDegisiklik.KALITE_SECENEKLERI
-    
-    koli = forms.CharField(max_length=8, label='Koli Türü', widget=forms.TextInput(attrs={'pattern': '[0-9/]+'}))
-    mamul_model = forms.ChoiceField(choices=MAMUL_SECENEKLERI, label='Model')
-    kalite = forms.ChoiceField(choices=KALITE_SECENEKLERI)
-    adet = forms.IntegerField(min_value=0)
+    mamul_model = forms.ChoiceField(choices=KoliDegisiklik.MAMUL_SECENEKLERI, label='Model')
+    koli_turu = forms.CharField(max_length=8, label='Koli Türü', widget=forms.TextInput(attrs={'pattern': r'^[1-9][0-9]?(?:/[1-9][0-9]?)?$'}))
+    kolideki_mamul_adet = forms.IntegerField(min_value=0)
+    kalite = forms.ChoiceField(choices=KoliDegisiklik.KALITE_SECENEKLERI)
+    koli_adet = forms.IntegerField(min_value=0)
 
 # Django sinyaller:
 
 @receiver(models.signals.pre_save, sender=KoliDegisiklik)
 def create_update_kolisondurum_from_kolidegisiklik(sender, instance, **kwargs):
+    """
+    Here's the json data blueprint for every MamulSonDurum column:
+    (This part is getting trickier and trickier everytime I edit it)
+    
+    raw data =
+    {
+        'kalite': {
+            'koli_turu': {
+                'kolideki_mamul_adet': 'koli_adet'
+            }
+        }
+    }
+    
+    
+    required_dict =
+    {
+        'koli_turu': {
+            'kolideki_mamul_adet': 'koli_adet'
+        }
+    }
+    
+    
+    required_dict_2 =
+    {
+        'kolideki_mamul_adet': 'koli_adet'
+    }
+    """
     try:
         selected_record = KoliSonDurum()
         if KoliSonDurum.objects.filter(tarih=timezone.localtime(timezone.now()).date()).exists():
-            modified_record = KoliSonDurum.objects.get(tarih=timezone.localtime(timezone.now()).date())
-            selected_record = modified_record
+            selected_record = KoliSonDurum.objects.get(tarih=timezone.localtime(timezone.now()).date())
         else:
-            new_record = KoliSonDurum.objects.latest('tarih')  # raises exception KoliSonDurum.DoesNotExist
-            new_record.pk = None  # Primary Key değerini sil ki güncelleme yerine yeni kayıt girdisi yapılsın
-            new_record.tarih = timezone.now().date()
-            selected_record = new_record
-        raw_data = json.loads(vars(selected_record)[instance.mamul_model])  # raises exception json.decoder.JSONDecodeError
-        required_dict = raw_data[instance.kalite]  # raises exception KeyError
-        if instance.koli in required_dict.keys():
-            required_dict[instance.koli] += instance.adet
+            selected_record = KoliSonDurum.objects.latest('tarih')  # raises exception KoliSonDurum.DoesNotExist
+            selected_record.pk = None  # Primary Key değerini sil ki güncelleme yerine yeni kayıt girdisi yapılsın
+            selected_record.tarih = timezone.now().date()
+        if vars(selected_record)[instance.mamul_model] != '':
+            raw_data = json.loads(vars(selected_record)[instance.mamul_model])  # raises exception json.decoder.JSONDecodeError
+            if instance.kalite in raw_data.keys():
+                required_dict = raw_data[instance.kalite]
+                if instance.koli_turu in required_dict.keys():
+                    required_dict_2 = required_dict[instance.koli_turu]
+                    if instance.kolideki_mamul_adet in required_dict_2.keys():
+                        required_dict_2[instance.kolideki_mamul_adet] += instance.koli_adet
+                    else:
+                        # Bu kolideki_mamul_adet değerine ait daha önce bir girdi yapılmamış demektir.
+                        required_dict_2[instance.kolideki_mamul_adet] = instance.koli_adet
+                    if required_dict_2[instance.kolideki_mamul_adet] < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
+                        raise IntegrityError
+                    if required_dict_2[instance.kolideki_mamul_adet] == 0:  # Stok sıfıra indiyse verisi boşa yer kaplamasın, silelim.
+                        del required_dict_2[instance.kolideki_mamul_adet]
+                    required_dict[instance.koli_turu] = {i:required_dict_2[i] for i in sorted(required_dict_2.keys(), reverse=True)}
+                else:
+                    # Bu koli türüne ait daha önce bir girdi yapılmamış demektir.
+                    if instance.koli_adet < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
+                        raise IntegrityError
+                    required_dict[instance.koli_turu] = {instance.kolideki_mamul_adet: instance.koli_adet}
+                if not required_dict[instance.koli_turu]:  # Koli türüne ait veri kalmadıysa boşa yer kaplamasın, silelim.
+                    del required_dict[instance.koli_turu]
+                raw_data[instance.kalite] = {i:required_dict[i] for i in sorted(required_dict.keys(), key=lambda x: sorting_key(x))}
+            else:
+                # Bu kaliteye ait daha önce bir girdi yapılmamış demektir.
+                if instance.koli_adet < 0:
+                    raise IntegrityError
+                raw_data[instance.kalite] = {instance.koli_turu: instance.koli_adet}
+            if not raw_data[instance.kalite]:  # Kaliteye ait veri kalmadıysa boşa yer kaplamsın silelim.
+                del raw_data[instance.kalite]
+            if raw_data:
+                vars(selected_record)[instance.mamul_model] = json.dumps(raw_data)
+            else:
+                vars(selected_record)[instance.mamul_model] = ''
         else:
-            print('1 key error')
-            # Bu koli türüne ait daha önce bir girdi yapılmamış demektir.
-            required_dict[instance.koli] = instance.adet
-        if required_dict[instance.koli] < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
-            raise IntegrityError
-        if required_dict[instance.koli] == 0:
-            del required_dict[instance.koli]
-        raw_data[instance.kalite] = {i:required_dict[i] for i in sorted(required_dict.keys(), key=lambda x: sorting_key(x))}  # Should this be here or on views???
-        vars(selected_record)[instance.mamul_model] = json.dumps(raw_data)
-        selected_record.save()
-    except KeyError:
-        print('2 key error')
-        # Bu kaliteye ait daha önce bir girdi yapılmamış demektir.
-        raw_data = json.loads(vars(selected_record)[instance.mamul_model])
-        if instance.adet <= 0:
-            raise IntegrityError
-        raw_data[instance.kalite] = {instance.koli: instance.adet}
-        vars(selected_record)[instance.mamul_model] = json.dumps(raw_data)
-        selected_record.save()
-    except json.decoder.JSONDecodeError:
-        print('json error')
-        # Bu modele ait daha önce bir girdi yapılmamış demektir.
-        if instance.adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
-            raise IntegrityError
-        vars(selected_record)[instance.mamul_model] = json.dumps({instance.kalite: {instance.koli: instance.adet}})
+            # Bu modele ait daha önce bir girdi yapılmamış demektir.
+            if instance.koli_adet < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
+                raise IntegrityError
+            vars(selected_record)[instance.mamul_model] = json.dumps({instance.kalite: {instance.koli_turu: {instance.kolideki_mamul_adet: instance.koli_adet}}})
         selected_record.save()
     except KoliSonDurum.DoesNotExist:
         print('does not exist error')
         # Veritabanında hiç koli son durum girdisi yok demektir. Bu kısım, ideal olarak, sadece bir kez çalışacak.
         first_record = KoliSonDurum(tarih=timezone.now().date())
-        if instance.adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
+        if instance.koli_adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
             raise IntegrityError
-        vars(first_record)[instance.mamul_model] = json.dumps({instance.kalite: {instance.koli: instance.adet}})
+        vars(first_record)[instance.mamul_model] = json.dumps({instance.kalite: {instance.koli_turu: instance.koli_adet}})
         first_record.save()
 
 @receiver(models.signals.pre_save, sender=HammaddeDegisiklik)
