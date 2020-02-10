@@ -346,17 +346,20 @@ class HammaddeDegisiklikForm(MyModelForm):
 
 class KoliRestockForm(MyForm):
     mamul_model = forms.ChoiceField(choices=KoliDegisiklik.MAMUL_SECENEKLERI, label='Model')
-    koli_turu = forms.CharField(max_length=8, label='Koli Türü', widget=forms.TextInput(attrs={'pattern': r'^[1-9][0-9]?(?:/[1-9][0-9]?)?$'}))
-    kolideki_mamul_adet = forms.IntegerField(min_value=0)
+    koli_turu = forms.CharField(max_length=8, label='Koli Türü')
+    kolideki_mamul_adet = forms.IntegerField(min_value=0, label='Kolideki Mamül Sayısı')
     kalite = forms.ChoiceField(choices=KoliDegisiklik.KALITE_SECENEKLERI)
     koli_adet = forms.IntegerField(min_value=0)
+    
+    mamul_model.widget.attrs.update({'onchange': 'kolidekiMamulSayisiGuncelle(event)'})
+    koli_turu.widget.attrs.update({'pattern': r'^[1-9][0-9]?(?:/[1-9][0-9]?)?$'})
 
 # Django sinyaller:
 
 @receiver(models.signals.pre_save, sender=KoliDegisiklik)
 def create_update_kolisondurum_from_kolidegisiklik(sender, instance, **kwargs):
     """
-    Here's the dictionary data blueprint for every MamulSonDurum column:
+    Here's the dictionary data blueprint for every KoliSonDurum column:
     (This part is getting trickier and trickier everytime I edit it)
     (This data is now being converted into binary data)
     
@@ -391,7 +394,7 @@ def create_update_kolisondurum_from_kolidegisiklik(sender, instance, **kwargs):
             selected_record = KoliSonDurum.objects.latest('tarih')  # raises exception KoliSonDurum.DoesNotExist
             selected_record.pk = None  # Primary Key değerini sil ki güncelleme yerine yeni kayıt girdisi yapılsın
             selected_record.tarih = timezone.now().date()
-        if vars(selected_record)[instance.mamul_model] != '':
+        if vars(selected_record)[instance.mamul_model] != b'':
             raw_data = pickle.loads(vars(selected_record)[instance.mamul_model])  # raises exception pickle.decoder.pickleDecodeError
             if instance.kalite in raw_data.keys():
                 required_dict = raw_data[instance.kalite]
@@ -425,7 +428,7 @@ def create_update_kolisondurum_from_kolidegisiklik(sender, instance, **kwargs):
             if raw_data:
                 vars(selected_record)[instance.mamul_model] = pickle.dumps(raw_data)
             else:
-                vars(selected_record)[instance.mamul_model] = ''
+                vars(selected_record)[instance.mamul_model] = b''
         else:
             # Bu modele ait daha önce bir girdi yapılmamış demektir.
             if instance.koli_adet < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.

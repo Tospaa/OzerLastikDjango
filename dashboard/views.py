@@ -1,5 +1,5 @@
 import api.models
-import json
+import pickle
 import os
 from django import forms
 from django.contrib import messages
@@ -92,18 +92,18 @@ def koliguncelle(request):
             for form in formset:
                 try:
                     record = api.models.KoliSonDurum.objects.latest('tarih')
-                    new_value = form.cleaned_data['adet'] - json.loads(vars(record)[form.cleaned_data['mamul_model']])[form.cleaned_data['kalite']][form.cleaned_data['koli']]
-                except (KeyError, json.decoder.JSONDecodeError, api.models.KoliSonDurum.DoesNotExist):
-                    new_value = form.cleaned_data['adet']
-                if new_value != 0:
-                    api.models.KoliDegisiklik.objects.create(
-                        koli=form.cleaned_data['koli'],
-                        mamul_model=form.cleaned_data['mamul_model'],
-                        kalite=form.cleaned_data['kalite'],
-                        adet=new_value,
-                        notlar='Bu değişiklik Koli Güncelleme ekranından yapılmıştır.',
-                        kullanici=request.user
-                    )
+                    new_value = form.cleaned_data['koli_adet'] - pickle.loads(vars(record)[form.cleaned_data['mamul_model']])[form.cleaned_data['kalite']][form.cleaned_data['koli_turu']][form.cleaned_data['kolideki_mamul_adet']]
+                except (KeyError, EOFError, api.models.KoliSonDurum.DoesNotExist):
+                    new_value = form.cleaned_data['koli_adet']
+                api.models.KoliDegisiklik.objects.create(
+                    mamul_model=form.cleaned_data['mamul_model'],
+                    koli_turu=form.cleaned_data['koli_turu'],
+                    kolideki_mamul_adet=form.cleaned_data['kolideki_mamul_adet'],
+                    kalite=form.cleaned_data['kalite'],
+                    koli_adet=new_value,
+                    notlar='Bu değişiklik Koli Güncelleme ekranından yapılmıştır.',
+                    kullanici=request.user
+                )
             messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
             return redirect('dashboard:koliguncelle')
     elif request.method == 'GET':

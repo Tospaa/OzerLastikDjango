@@ -68,5 +68,22 @@ $('#deleterow').click(function() {
         $('#id_form-TOTAL_FORMS').val(parseInt(form_idx));
     }
 });
+
+function kolidekiMamulSayisiGuncelle(event) {
+    var id = event.target.id[8];
+    switch ($(`#${event.target.id} :selected`).parent().attr('label')) {
+        case 'Krep Çizme':
+            $(`#id_form-${id}-kolideki_mamul_adet`).val(20);
+            break;
+        case 'Galoş Ayakkabı':
+            $(`#id_form-${id}-kolideki_mamul_adet`).val(50);
+            break;
+        case 'Kobalt Çizme':
+            $(`#id_form-${id}-kolideki_mamul_adet`).val(10);
+            break;
+        default:
+            $(`#id_form-${id}-kolideki_mamul_adet`).val(null);
+    }
+}
 </script>
 {% endblock %}

@@ -43,10 +43,10 @@
                                         </div>
                                         <div class="widget-content-right" data-toggle="tooltip" data-placement="bottom" data-original-title="Tarih: {{ row.tarih }}">
                                             <div class="font-size-xlg text-muted">
-                                                <small class="pr-1">{{ row.get_mamul_model_display }}</small>
+                                                <small class="pr-1">{{ row.get_mamul_model_display }}({{ row.koli_turu }})</small>
                                                 <span>{{ row.koli_adet|abs }}</span>
-                                                <small class="text-{% if row.adet < 0 %}danger{% else %}success{% endif %} pl-2">
-                                                    <i class="fa fa-angle-{% if row.adet < 0 %}down{% else %}up{% endif %}"></i>
+                                                <small class="text-{% if row.koli_adet < 0 %}danger{% else %}success{% endif %} pl-2">
+                                                    <i class="fa fa-angle-{% if row.koli_adet < 0 %}down{% else %}up{% endif %}"></i>
                                                 </small>
                                             </div>
                                         </div>
@@ -61,4 +61,24 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block extrascript %}
+<script type="text/javascript">
+$('#id_mamul_model').change(function ()
+{
+switch($('#id_mamul_model :selected').parent().attr('label')) {
+    case 'Krep Çizme':
+        $('#id_kolideki_mamul_adet').val(20);
+        break;
+    case 'Galoş Ayakkabı':
+        $('#id_kolideki_mamul_adet').val(50);
+        break;
+    case 'Kobalt Çizme':
+        $('#id_kolideki_mamul_adet').val(10);
+        break;
+    default:
+        $('#id_kolideki_mamul_adet').val(null);
+}
+});
+</script>
 {% endblock %}

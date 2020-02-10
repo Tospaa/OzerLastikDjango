@@ -15,14 +15,12 @@ def koli_son_durum_binary_to_html(value):
         html_code = ''
 
         if '1' in data:
-            first_class_prod_sum = 0
             first_class_pack_sum = 0
             for i in data['1'].values():
                 for j in i.values():
                     first_class_pack_sum += j
             html_code = f'1. kalite toplam: <b>{first_class_pack_sum}</b> koli'
         if '2' in data:
-            second_class_prod_sum = 0
             second_class_pack_sum = 0
             for i in data['2'].values():
                 for j in i.values():
