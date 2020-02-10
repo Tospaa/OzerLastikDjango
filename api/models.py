@@ -419,7 +419,7 @@ def create_update_kolisondurum_from_kolidegisiklik(sender, instance, **kwargs):
                 # Bu kaliteye ait daha önce bir girdi yapılmamış demektir.
                 if instance.koli_adet < 0:
                     raise IntegrityError
-                raw_data[instance.kalite] = {instance.koli_turu: instance.koli_adet}
+                raw_data[instance.kalite] = {instance.koli_turu: {instance.kolideki_mamul_adet: instance.koli_adet}}
             if not raw_data[instance.kalite]:  # Kaliteye ait veri kalmadıysa boşa yer kaplamsın silelim.
                 del raw_data[instance.kalite]
             if raw_data:
