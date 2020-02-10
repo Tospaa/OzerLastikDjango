@@ -4,33 +4,33 @@ from django.contrib.auth.models import User
 from django.db import models, IntegrityError
 from django.dispatch import receiver
 from django.utils import timezone
-import json
+import pickle
 
 # Mamuller:
 
 class KoliSonDurum(models.Model):
     tarih = models.DateField(unique=True)
-    KrepKisaKonc = models.TextField(blank=True)
-    KrepUzunKonc = models.TextField(blank=True)
-    KrepGarsonKisa = models.TextField(blank=True)
-    KrepGarsonUzun = models.TextField(blank=True)
-    KrepKahveBot = models.TextField(blank=True)
-    KrepSiyahBot = models.TextField(blank=True)
-    KrepCelikBurunluCizme = models.TextField(blank=True)
-    KasikCizme = models.TextField(blank=True)
-    FiletBezli = models.TextField(blank=True)
-    ZenneBezli = models.TextField(blank=True)
-    MerdaneBezli = models.TextField(blank=True)
-    MerdaneFanilali = models.TextField(blank=True)
-    ZenneIskarpin = models.TextField(blank=True)
-    MerdaneIskarpin = models.TextField(blank=True)
-    GarsonIskarpin = models.TextField(blank=True)
-    PresCizmeOB = models.TextField(blank=True)
-    PresCizmeS4 = models.TextField(blank=True)
-    PresCizmeS5 = models.TextField(blank=True)
-    ElektrikciOB = models.TextField(blank=True)
-    ElektrikciS4 = models.TextField(blank=True)
-    ElektrikciS5 = models.TextField(blank=True)
+    KrepKisaKonc = models.BinaryField(blank=True, editable=True)
+    KrepUzunKonc = models.BinaryField(blank=True, editable=True)
+    KrepGarsonKisa = models.BinaryField(blank=True, editable=True)
+    KrepGarsonUzun = models.BinaryField(blank=True, editable=True)
+    KrepKahveBot = models.BinaryField(blank=True, editable=True)
+    KrepSiyahBot = models.BinaryField(blank=True, editable=True)
+    KrepCelikBurunluCizme = models.BinaryField(blank=True, editable=True)
+    KasikCizme = models.BinaryField(blank=True, editable=True)
+    FiletBezli = models.BinaryField(blank=True, editable=True)
+    ZenneBezli = models.BinaryField(blank=True, editable=True)
+    MerdaneBezli = models.BinaryField(blank=True, editable=True)
+    MerdaneFanilali = models.BinaryField(blank=True, editable=True)
+    ZenneIskarpin = models.BinaryField(blank=True, editable=True)
+    MerdaneIskarpin = models.BinaryField(blank=True, editable=True)
+    GarsonIskarpin = models.BinaryField(blank=True, editable=True)
+    PresCizmeOB = models.BinaryField(blank=True, editable=True)
+    PresCizmeS4 = models.BinaryField(blank=True, editable=True)
+    PresCizmeS5 = models.BinaryField(blank=True, editable=True)
+    ElektrikciOB = models.BinaryField(blank=True, editable=True)
+    ElektrikciS4 = models.BinaryField(blank=True, editable=True)
+    ElektrikciS5 = models.BinaryField(blank=True, editable=True)
 
 class KoliDegisiklik(models.Model):
     MAMUL_SECENEKLERI = [
@@ -331,7 +331,7 @@ class KoliDegisiklikForm(MyModelForm):
         }
         widgets = {
             'notlar': forms.Textarea(),
-            'koli': forms.TextInput(attrs={
+            'koli_turu': forms.TextInput(attrs={
                 'pattern': r'^[1-9][0-9]?(?:/[1-9][0-9]?)?$',
             }),
         }
@@ -356,8 +356,9 @@ class KoliRestockForm(MyForm):
 @receiver(models.signals.pre_save, sender=KoliDegisiklik)
 def create_update_kolisondurum_from_kolidegisiklik(sender, instance, **kwargs):
     """
-    Here's the json data blueprint for every MamulSonDurum column:
+    Here's the dictionary data blueprint for every MamulSonDurum column:
     (This part is getting trickier and trickier everytime I edit it)
+    (This data is now being converted into binary data)
     
     raw data =
     {
@@ -391,7 +392,7 @@ def create_update_kolisondurum_from_kolidegisiklik(sender, instance, **kwargs):
             selected_record.pk = None  # Primary Key değerini sil ki güncelleme yerine yeni kayıt girdisi yapılsın
             selected_record.tarih = timezone.now().date()
         if vars(selected_record)[instance.mamul_model] != '':
-            raw_data = json.loads(vars(selected_record)[instance.mamul_model])  # raises exception json.decoder.JSONDecodeError
+            raw_data = pickle.loads(vars(selected_record)[instance.mamul_model])  # raises exception pickle.decoder.pickleDecodeError
             if instance.kalite in raw_data.keys():
                 required_dict = raw_data[instance.kalite]
                 if instance.koli_turu in required_dict.keys():
@@ -422,22 +423,22 @@ def create_update_kolisondurum_from_kolidegisiklik(sender, instance, **kwargs):
             if not raw_data[instance.kalite]:  # Kaliteye ait veri kalmadıysa boşa yer kaplamsın silelim.
                 del raw_data[instance.kalite]
             if raw_data:
-                vars(selected_record)[instance.mamul_model] = json.dumps(raw_data)
+                vars(selected_record)[instance.mamul_model] = pickle.dumps(raw_data)
             else:
                 vars(selected_record)[instance.mamul_model] = ''
         else:
             # Bu modele ait daha önce bir girdi yapılmamış demektir.
             if instance.koli_adet < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
                 raise IntegrityError
-            vars(selected_record)[instance.mamul_model] = json.dumps({instance.kalite: {instance.koli_turu: {instance.kolideki_mamul_adet: instance.koli_adet}}})
+            vars(selected_record)[instance.mamul_model] = pickle.dumps({instance.kalite: {instance.koli_turu: {instance.kolideki_mamul_adet: instance.koli_adet}}})
         selected_record.save()
     except KoliSonDurum.DoesNotExist:
         print('does not exist error')
         # Veritabanında hiç koli son durum girdisi yok demektir. Bu kısım, ideal olarak, sadece bir kez çalışacak.
         first_record = KoliSonDurum(tarih=timezone.now().date())
-        if instance.koli_adet <= 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
+        if instance.koli_adet < 0:  # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
             raise IntegrityError
-        vars(first_record)[instance.mamul_model] = json.dumps({instance.kalite: {instance.koli_turu: instance.koli_adet}})
+        vars(first_record)[instance.mamul_model] = pickle.dumps({instance.kalite: {instance.koli_turu: {instance.kolideki_mamul_adet: instance.koli_adet}}})
         first_record.save()
 
 @receiver(models.signals.pre_save, sender=HammaddeDegisiklik)

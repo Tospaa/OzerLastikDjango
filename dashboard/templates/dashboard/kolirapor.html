@@ -113,9 +113,9 @@
                     {% for durum in koli_son_son_durum %}
                         <tr>
                             <th scope="row">{{ durum.tarih|date:'j/n/Y' }}</th>
-                            <td>{{ durum.KrepKisaKonc|msdjsonbrief }}</td>
-                            <td>{{ durum.FiletBezli|msdjsonbrief }}</td>
-                            <td>{{ durum.PresCizmeOB|msdjsonbrief }}</td>
+                            <td>{{ durum.KrepKisaKonc|msdpicklebrief }}</td>
+                            <td>{{ durum.FiletBezli|msdpicklebrief }}</td>
+                            <td>{{ durum.PresCizmeOB|msdpicklebrief }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

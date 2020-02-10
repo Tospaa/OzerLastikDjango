@@ -71,10 +71,10 @@ def kolirapor(request):
     if 'istek' in request.GET.keys():
         if request.GET['istek'] == 'deg_tumu':
             # TODO: Implement all api.models.MamulDegisiklik
-            return render(request, 'dashboard/mamulrapor.html')
+            return render(request, 'dashboard/kolirapor.html')
         elif request.GET['istek'] == 'son_tumu':
             # TODO: Implement all api.models.MamulSonDurum
-            return render(request, 'dashboard/mamulrapor.html')
+            return render(request, 'dashboard/kolirapor.html')
     elif 'tarih' in request.GET.keys():
         pass
     elif 'detay' in request.GET.keys():
