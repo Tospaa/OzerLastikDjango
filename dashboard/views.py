@@ -11,6 +11,8 @@ from .models import AccountFormU, AccountFormP
 from tsp_prj.settings import BASE_DIR
 
 # NoAuth sayfalar:
+
+
 def iletisim(request):
     return render(request, 'dashboard/iletisim.html')
 
@@ -156,5 +158,27 @@ def hammadderapor(request):
 
 @login_required
 def hammaddeguncelle(request):
-    # TODO: Implement this.
-    pass
+    api.models.HammaddeRestockFormset = forms.formset_factory(
+        api.models.HammaddeRestockForm)
+    if request.method == 'POST':
+        formset = api.models.HammaddeRestockFormset(request.POST)
+        if formset.is_valid():
+            for form in formset:
+                try:
+                    record = api.models.HammaddeSonDurum.objects.latest(
+                        'tarih')
+                    new_value = form.cleaned_data['miktar'] - \
+                        vars(record)[form.cleaned_data['madde']]
+                except (KeyError, EOFError, api.models.HammaddeSonDurum.DoesNotExist):
+                    new_value = form.cleaned_data['miktar']
+                api.models.HammaddeDegisiklik.objects.create(
+                    madde=form.cleaned_data['madde'],
+                    miktar=new_value,
+                    notlar='Bu değişiklik Hammadde Güncelleme ekranından yapılmıştır.',
+                    kullanici=request.user
+                )
+            messages.add_message(request, messages.SUCCESS, 'Kayıt başarılı.')
+            return redirect('dashboard:hammaddeguncelle')
+    elif request.method == 'GET':
+        formset = api.models.HammaddeRestockFormset()
+    return render(request, 'dashboard/hammaddeguncelle.html', {'formset': formset})
