@@ -775,11 +775,11 @@ var pasta_config = {
             }
         };
 
-window.addEventListener("load",function(event) {
+$(document).ready(function(event) {
             var cizgi_ctx = document.getElementById('cizgi-grafik').getContext('2d');
             window.cizgiGrafik = new Chart(cizgi_ctx, cizgi_config);
             var pasta_ctx = document.getElementById('pasta-grafik').getContext('2d');
             window.pastaGrafik = new Chart(pasta_ctx, pasta_config);
-        }, false);
+        });
 </script>
 {% endblock %}

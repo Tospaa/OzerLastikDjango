@@ -181,7 +181,7 @@
                         <ul class="vertical-nav-menu">
                             <li class="app-sidebar__heading">Sayfalar</li>
                             <li>
-                                <!-- request.resolver_match.view_name solution is from: https://stackoverflow.com/a/38152923 -->
+                                {% comment %} request.resolver_match.view_name solution is from: https://stackoverflow.com/a/38152923 {% endcomment %}
                                 <a href="{% url 'dashboard:anasayfa' %}" {% if request.resolver_match.view_name == 'dashboard:anasayfa' %}class="mm-active"{% endif %}>
                                     <i class="metismenu-icon pe-7s-home"></i>
                                     Anasayfa
@@ -320,32 +320,61 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript" src="{% static "dashboard/scripts/main.js" %}"></script>
-    <script type="text/javascript" src="{% static "dashboard/scripts/jquery-3.4.1.min.js" %}"></script>
+    <script type="text/javascript" src="{% static 'dashboard/scripts/main.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dashboard/scripts/jquery-3.4.1.min.js' %}"></script>
     <script type="text/javascript">
         searchButtonClicked = function() {
             if (document.getElementById('search-div').getAttribute('class') == 'search-wrapper active') {
                 document.getElementById('search-button').click()
             }
         }
+
+        {% comment %} $(document).ready(function() {
+            var items = ["bg-warm-flame",
+                "bg-night-fade",
+                "bg-sunny-morning",
+                "bg-tempting-azure",
+                "bg-amy-crisp",
+                "bg-mean-fruit",
+                "bg-malibu-beach",
+                "bg-deep-blue",
+                "bg-ripe-malin",
+                "bg-arielle-smile",
+                "bg-plum-plate",
+                "bg-happy-fisher",
+                "bg-happy-itmeo",
+                "bg-mixed-hopes",
+                "bg-strong-bliss",
+                "bg-grow-early",
+                "bg-love-kiss",
+                "bg-premium-dark",
+                "bg-happy-green",
+                "bg-midnight-bloom"];
+
+                $('i#id-page-icon').addClass($('.mm-active').parent().find('i').attr('class').split(' ')[1]);
+                $('i#id-page-icon').addClass('icon-gradient');
+                $('i#id-page-icon').addClass(items[Math.floor(Math.random() * items.length)]);
+                $('title').text(`${$('.mm-active').text().trim()} - Özer Lastik &amp; Ayakkabı`);
+                $('div#id-page-title').text($('.mm-active').text().trim())
+        }); {% endcomment %}
     </script>
     {% block extrascript %}{% endblock %}
 {% if messages %}
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<script type="text/javascript" src="{% static 'dashboard/scripts/sweetalert2.9.js' %}"></script>
 {% if messages|length == 1 %}
 <script type="text/javascript">
-window.addEventListener("load",function(event) { {% for message in messages %}
+$(document).ready(function(event) { {% for message in messages %}
             Swal.fire({
                 title: {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}'Hata'{% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}'Başarılı'{% endif %},
                 text: '{{ message }}',
                 icon: {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}'error'{% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}'success'{% endif %},
                 confirmButtonText: 'Kapat'
             }); {% endfor %}
-        }, false);
+        });
 </script>
 {% else %}
 <script type="text/javascript">
-window.addEventListener("load",function(event) {
+$(document).ready(function(event) {
             Swal.mixin({
                 confirmButtonText: 'Kapat',
                 showCancelButton: false,
@@ -358,7 +387,7 @@ window.addEventListener("load",function(event) {
                 },
                 {% endfor %}
             ]);
-        }, false);
+        });
 </script>
 {% endif %}
 {% endif %}
