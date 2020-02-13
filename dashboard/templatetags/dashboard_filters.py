@@ -8,6 +8,10 @@ register = template.Library()
 def abs_filter(value):
     return abs(value)
 
+@register.filter(name='times')
+def carpma_filter(value, arg):
+    return value*arg
+
 @register.filter(name='ksdpackonly')
 def koli_son_durum_binary_to_html(value):
     try:

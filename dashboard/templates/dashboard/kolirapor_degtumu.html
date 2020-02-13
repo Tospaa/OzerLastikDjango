@@ -1,0 +1,46 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load dashboard_filters %}
+{% block title %}Koli Rapor{% endblock %}
+{% block icon %}pe-7s-ticket icon-gradient bg-happy-itmeo{% endblock %}
+{% block pagetitle %}Koli Rapor{% endblock %}
+{% block pagesubtitle %}Koli Rapor{% endblock %}
+{% block content %}
+<div class="main-card mb-3 card">
+    <div class="card-body">
+        <h5 class="card-title">Tüm Koli Giriş Çıkışları</h5>
+        <table class="mb-0 table table-hover">
+            <thead>
+                <tr>
+                    <th>Tarih</th>
+                    <th>Model</th>
+                    <th>Kalite</th>
+                    <th>Numara</th>
+                    <th>Koli Adedi</th>
+                    <th>Çift Adedi</th>
+                    <th>Notlar</th>
+                    <th>Değişikliği Yapan</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for degisiklik in data %}
+                <tr>
+                    <th scope="row">{{ degisiklik.tarih|date:'j/n/Y G:i' }}</th>
+                    <td>{{ degisiklik.get_mamul_model_display }}</td>
+                    <td>{{ degisiklik.kalite }}</td>
+                    <td>{{ degisiklik.koli_turu }}</td>
+                    <td>{{ degisiklik.koli_adet }}</td>
+                    <td>{{ degisiklik.koli_adet|times:degisiklik.kolideki_mamul_adet }}</td>
+                    <td>{% if degisiklik.notlar %}
+                        <div class="widget-content-right" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ degisiklik.notlar }}">
+                        {{ degisiklik.notlar|truncatechars:10 }}
+                        </div>{% endif %}
+                    </td>
+                    <td>{{ degisiklik.kullanici.get_full_name }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

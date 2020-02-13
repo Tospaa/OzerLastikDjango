@@ -76,11 +76,12 @@ class KoliDegisiklik(models.Model):
     ]
 
     mamul_model = models.CharField(max_length=32, choices=MAMUL_SECENEKLERI)
-    koli_turu = models.CharField(max_length=8)
-    kolideki_mamul_adet = models.PositiveIntegerField()
     kalite = models.CharField(
         max_length=1, choices=KALITE_SECENEKLERI, default='1')
+    koli_turu = models.CharField(max_length=8)
     koli_adet = models.IntegerField()
+    kolideki_mamul_adet = models.PositiveIntegerField()
+    imalat = models.BooleanField(default=True)
     notlar = models.CharField(max_length=256, blank=True)
     tarih = models.DateTimeField(auto_now_add=True)
     kullanici = models.ForeignKey(User, on_delete=models.PROTECT)
@@ -341,7 +342,7 @@ class KoliDegisiklikForm(MyModelForm):
         model = KoliDegisiklik
         exclude = ('kullanici',)
         labels = {
-            'koli_turu': 'Koli Türü',
+            'koli_turu': 'Numara',
             'mamul_model': 'Model',
             'kolideki_mamul_adet': 'Kolideki Mamül Sayısı',
         }
@@ -365,16 +366,18 @@ class HammaddeDegisiklikForm(MyModelForm):
 class KoliRestockForm(MyForm):
     mamul_model = forms.ChoiceField(
         choices=KoliDegisiklik.MAMUL_SECENEKLERI, label='Model')
-    koli_turu = forms.CharField(max_length=8, label='Koli Türü')
+    kalite = forms.ChoiceField(choices=KoliDegisiklik.KALITE_SECENEKLERI)
+    koli_turu = forms.CharField(max_length=8, label='Numara')
+    koli_adet = forms.IntegerField(min_value=0)
     kolideki_mamul_adet = forms.IntegerField(
         min_value=0, label='Kolideki Mamül Sayısı')
-    kalite = forms.ChoiceField(choices=KoliDegisiklik.KALITE_SECENEKLERI)
-    koli_adet = forms.IntegerField(min_value=0)
 
     mamul_model.widget.attrs.update(
         {'onchange': 'kolidekiMamulSayisiGuncelle(event)'})
     koli_turu.widget.attrs.update(
         {'pattern': r'^[1-9][0-9]?(?:/[1-9][0-9]?)?$'})
+    kolideki_mamul_adet.widget.attrs.update(
+        {'value': 20})
 
 
 class HammaddeRestockForm(MyForm):

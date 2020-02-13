@@ -82,8 +82,8 @@ def kolieklecikar(request):
 def kolirapor(request):
     if 'istek' in request.GET.keys():
         if request.GET['istek'] == 'deg_tumu':
-            # TODO: Implement all api.models.MamulDegisiklik
-            return render(request, 'dashboard/kolirapor.html')
+            data = api.models.KoliDegisiklik.objects.select_related('kullanici').order_by('-id')
+            return render(request, 'dashboard/kolirapor_degtumu.html', {'data': data})
         elif request.GET['istek'] == 'son_tumu':
             # TODO: Implement all api.models.MamulSonDurum
             return render(request, 'dashboard/kolirapor.html')
@@ -91,10 +91,9 @@ def kolirapor(request):
         pass
     elif 'detay' in request.GET.keys():
         pass
-    koli_son_degisiklikler = api.models.KoliDegisiklik.objects.order_by(
-        '-id')[:10]
-    koli_son_son_durum = api.models.KoliSonDurum.objects.order_by('-id')[:10]
-    return render(request, 'dashboard/kolirapor.html', {'koli_son_degisiklikler': koli_son_degisiklikler, 'koli_son_son_durum': koli_son_son_durum})
+    koli_son_degisiklikler = api.models.KoliDegisiklik.objects.order_by('-id')[:10]
+    koli_son_durum_ = api.models.KoliSonDurum.objects.latest('tarih')
+    return render(request, 'dashboard/kolirapor.html', {'koli_son_degisiklikler': koli_son_degisiklikler, 'durum': koli_son_durum_})
 
 
 @login_required

@@ -40,25 +40,99 @@
     <div class="col-lg-6">
         <div class="main-card mb-3 card">
             <div class="card-body">
-                <h5 class="card-title">Gün Bazlı Koli Durumları</h5>
-                <table class="mb-0 table table-hover">
+                <h5 class="card-title">Koli Stok Durumu</h5>
+                <table class="mb-0 table">
                     <thead>
                         <tr>
-                            <th>Tarih</th>
-                            <th>Krep Kısa Konç</th>
-                            <th>Filet Bezli</th>
-                            <th>Pres Çizme OB</th>
+                            <th>Modeller</th>
+                            <th>Tarih: {{ durum.tarih|date:'j/n/Y' }}</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {% for durum in koli_son_son_durum %}
                         <tr>
-                            <th scope="row">{{ durum.tarih|date:'j/n/Y' }}</th>
+                            <th>Krep Kısa Konç</th>
                             <td>{{ durum.KrepKisaKonc|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Krep Uzun Konç</th>
+                            <td>{{ durum.KrepUzunKonc|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Krep Garson Kısa</th>
+                            <td>{{ durum.KrepGarsonKisa|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Krep Garson Uzun</th>
+                            <td>{{ durum.KrepGarsonUzun|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Krep Kahve Bot</th>
+                            <td>{{ durum.KrepKahveBot|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Krep Siyah Bot</th>
+                            <td>{{ durum.KrepSiyahBot|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Krep Çelik Burunlu Çizme</th>
+                            <td>{{ durum.KrepCelikBurunluCizme|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Kasık Çizme</th>
+                            <td>{{ durum.KasikCizme|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Filet Bezli</th>
                             <td>{{ durum.FiletBezli|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Zenne Bezli</th>
+                            <td>{{ durum.ZenneBezli|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Merdane Bezli</th>
+                            <td>{{ durum.MerdaneBezli|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Merdane Fanilalı</th>
+                            <td>{{ durum.MerdaneFanilali|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Zenne İskarpin</th>
+                            <td>{{ durum.ZenneIskarpin|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Merdane İskarpin</th>
+                            <td>{{ durum.MerdaneIskarpin|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Garson İskarpin</th>
+                            <td>{{ durum.GarsonIskarpin|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Pres Çizme OB</th>
                             <td>{{ durum.PresCizmeOB|ksdpackonly }}</td>
                         </tr>
-                    {% endfor %}
+                        <tr>
+                            <th>Pres Çizme S4</th>
+                            <td>{{ durum.PresCizmeS4|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Pres Çizme S5</th>
+                            <td>{{ durum.PresCizmeS5|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Elektrikçi OB</th>
+                            <td>{{ durum.ElektrikciOB|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Elektrikçi S4</th>
+                            <td>{{ durum.ElektrikciS4|ksdpackonly }}</td>
+                        </tr>
+                        <tr>
+                            <th>Elektrikçi S5</th>
+                            <td>{{ durum.ElektrikciS5|ksdpackonly }}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
