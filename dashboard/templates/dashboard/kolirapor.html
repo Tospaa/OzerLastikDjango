@@ -2,7 +2,7 @@
 {% load static %}
 {% load dashboard_filters %}
 {% block title %}Koli Rapor{% endblock %}
-{% block icon %}pe-7s-ticket icon-gradient bg-happy-itmeo{% endblock %}
+{% block icon %}pe-7s-box2 icon-gradient bg-happy-itmeo{% endblock %}
 {% block pagetitle %}Koli Rapor{% endblock %}
 {% block pagesubtitle %}Koli Rapor{% endblock %}
 {% block content %}
@@ -41,7 +41,7 @@
         <div class="main-card mb-3 card">
             <div class="card-body">
                 <h5 class="card-title">Koli Stok Durumu</h5>
-                <table class="mb-0 table">
+                <table class="mb-0 table table-hover">
                     <thead>
                         <tr>
                             <th>Modeller</th>
@@ -137,7 +137,7 @@
                 </table>
             </div>
             <div class="card-footer">
-                <a href="{% url 'dashboard:kolirapor' %}?istek=son_tumu">Tümünü gör</a>
+                <a href="{% url 'dashboard:kolirapor' %}?istek=son_tumu">Geçmiş bir gün için stok durumu sorgula</a>
             </div>
         </div>
     </div>

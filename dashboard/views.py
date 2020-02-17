@@ -85,8 +85,17 @@ def kolirapor(request):
             data = api.models.KoliDegisiklik.objects.select_related('kullanici').order_by('-id')
             return render(request, 'dashboard/kolirapor_degtumu.html', {'data': data})
         elif request.GET['istek'] == 'son_tumu':
-            # TODO: Implement all api.models.MamulSonDurum
-            return render(request, 'dashboard/kolirapor.html')
+            data = None
+            if request.method == 'POST':
+                form = api.models.GunGetirForm(request.POST)
+                if form.is_valid():
+                    try:
+                        data = api.models.KoliSonDurum.objects.get(tarih=form.cleaned_data['gun'])
+                    except api.models.KoliSonDurum.DoesNotExist:
+                        messages.add_message(request, messages.ERROR, 'Girilen güne ait veri bulunamadı.')
+            elif request.method == 'GET':
+                form = api.models.GunGetirForm()
+            return render(request, 'dashboard/kolirapor_sontumu.html', {'form': form, 'data': data})
     elif 'tarih' in request.GET.keys():
         pass
     elif 'detay' in request.GET.keys():

@@ -384,6 +384,10 @@ class HammaddeRestockForm(MyForm):
     madde = forms.ChoiceField(choices=HammaddeDegisiklik.HAMMADDE_SECENEKLERI)
     miktar = forms.IntegerField(min_value=0)
 
+
+class GunGetirForm(forms.Form):
+    gun = forms.DateField()
+
 # Django sinyaller:
 
 
