@@ -1,0 +1,40 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load dashboard_filters %}
+{% block title %}Hammadde Rapor{% endblock %}
+{% block icon %}pe-7s-paint-bucket icon-gradient bg-amy-crisp{% endblock %}
+{% block pagetitle %}Hammadde Rapor{% endblock %}
+{% block pagesubtitle %}Tüm Hammadde Giriş Çıkışları{% endblock %}
+{% block content %}
+<div class="main-card mb-3 card">
+    <div class="card-body">
+        <h5 class="card-title">Tüm Hammadde Giriş Çıkışları</h5>
+        <table class="mb-0 table table-hover">
+            <thead>
+                <tr>
+                    <th>Tarih</th>
+                    <th>Madde</th>
+                    <th>Miktar</th>
+                    <th>Notlar</th>
+                    <th>Değişikliği Yapan</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for degisiklik in data %}
+                <tr>
+                    <th scope="row">{{ degisiklik.tarih|date:'j/n/Y G:i' }}</th>
+                    <td>{{ degisiklik.get_madde_display }}</td>
+                    <td>{{ degisiklik.miktar }}</td>
+                    <td>{% if degisiklik.notlar %}
+                        <div class="widget-content-right" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ degisiklik.notlar }}">
+                        {{ degisiklik.notlar|truncatechars:10 }}
+                        </div>{% endif %}
+                    </td>
+                    <td>{{ degisiklik.kullanici.get_full_name }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

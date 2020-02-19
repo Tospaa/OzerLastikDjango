@@ -78,7 +78,7 @@ def kolieklecikar(request):
                     request, messages.ERROR, 'Veritabanına geçersiz girdi yapmaya çalıştınız. Stokta var olandan daha fazla malzemeyi çıktı gibi göstermeye çalışıyor olabilirsiniz. Girdiğiniz verileri gözden geçirin.')
     elif request.method == 'GET':
         form = api.models.KoliDegisiklikForm()
-    return render(request, 'dashboard/kolieklecikar.html', {'form': form, 'son_on': son_on})
+    return render(request, 'dashboard/koli/kolieklecikar.html', {'form': form, 'son_on': son_on})
 
 
 @login_required
@@ -87,7 +87,7 @@ def kolirapor(request):
         if request.GET['istek'] == 'deg_tumu':
             data = api.models.KoliDegisiklik.objects.select_related(
                 'kullanici').order_by('-id')
-            return render(request, 'dashboard/kolirapor_degtumu.html', {'data': data})
+            return render(request, 'dashboard/koli/kolirapor_degtumu.html', {'data': data})
         elif request.GET['istek'] == 'son_tumu':
             data = None
             if request.method == 'POST':
@@ -101,7 +101,7 @@ def kolirapor(request):
                             request, messages.ERROR, 'Girilen güne ait veri bulunamadı.')
             elif request.method == 'GET':
                 form = api.models.GunGetirForm()
-            return render(request, 'dashboard/kolirapor_sontumu.html', {'form': form, 'data': data})
+            return render(request, 'dashboard/koli/kolirapor_sontumu.html', {'form': form, 'data': data})
     elif 'tarih' in request.GET.keys():
         pass
     elif 'detay' in request.GET.keys():
@@ -113,7 +113,7 @@ def kolirapor(request):
         '-id').only('tarih', 'mamul_model', 'koli_turu', 'koli_adet')[:10]
     koli_son_durum_ = dashboard.serializers.SingleRecordSerializer(
         api.models.KoliSonDurum.objects.latest('tarih'))
-    return render(request, 'dashboard/kolirapor.html', {'koli_son_degisiklikler': koli_son_degisiklikler, 'durum': koli_son_durum_})
+    return render(request, 'dashboard/koli/kolirapor.html', {'koli_son_degisiklikler': koli_son_degisiklikler, 'durum': koli_son_durum_})
 
 
 @login_required
@@ -143,7 +143,7 @@ def koliguncelle(request):
             return redirect('dashboard:koliguncelle')
     elif request.method == 'GET':
         formset = api.models.KoliRestockFormset()
-    return render(request, 'dashboard/koliguncelle.html', {'formset': formset})
+    return render(request, 'dashboard/koli/koliguncelle.html', {'formset': formset})
 
 
 @login_required
@@ -166,16 +166,35 @@ def hammaddeeklecikar(request):
                     'Veritabanına geçersiz girdi yapmaya çalıştınız. Stokta var olandan daha fazla malzemeyi çıktı gibi göstermeye çalışıyor olabilirsiniz. Girdiğiniz verileri gözden geçirin.')
     elif request.method == 'GET':
         form = api.models.HammaddeDegisiklikForm()
-    return render(request, 'dashboard/hammaddeeklecikar.html', {'form': form, 'son_on': son_on})
+    return render(request, 'dashboard/hammadde/hammaddeeklecikar.html', {'form': form, 'son_on': son_on})
 
 
 @login_required
 def hammadderapor(request):
+    if 'istek' in request.GET.keys():
+        if request.GET['istek'] == 'deg_tumu':
+            data = api.models.HammaddeDegisiklik.objects.select_related(
+                'kullanici').order_by('-id')
+            return render(request, 'dashboard/hammadde/hammadderapor_degtumu.html', {'data': data})
+        elif request.GET['istek'] == 'son_tumu':
+            data = None
+            if request.method == 'POST':
+                form = api.models.GunGetirForm(request.POST)
+                if form.is_valid():
+                    try:
+                        data = dashboard.serializers.SingleRecordSerializer(
+                            api.models.HammaddeSonDurum.objects.get(tarih=form.cleaned_data['gun']))
+                    except api.models.HammaddeSonDurum.DoesNotExist:
+                        messages.add_message(
+                            request, messages.ERROR, 'Girilen güne ait veri bulunamadı.')
+            elif request.method == 'GET':
+                form = api.models.GunGetirForm()
+            return render(request, 'dashboard/hammadde/hammadderapor_sontumu.html', {'form': form, 'data': data})
     ham_son_degisiklikler = api.models.HammaddeDegisiklik.objects.order_by(
         '-id').only('tarih', 'madde', 'miktar')[:10]
     ham_son_durum = dashboard.serializers.SingleRecordSerializer(
         api.models.HammaddeSonDurum.objects.latest('tarih'))
-    return render(request, 'dashboard/hammadderapor.html', {'ham_son_degisiklikler': ham_son_degisiklikler, 'durum': ham_son_durum})
+    return render(request, 'dashboard/hammadde/hammadderapor.html', {'ham_son_degisiklikler': ham_son_degisiklikler, 'durum': ham_son_durum})
 
 
 @login_required
@@ -203,4 +222,4 @@ def hammaddeguncelle(request):
             return redirect('dashboard:hammaddeguncelle')
     elif request.method == 'GET':
         formset = api.models.HammaddeRestockFormset()
-    return render(request, 'dashboard/hammaddeguncelle.html', {'formset': formset})
+    return render(request, 'dashboard/hammadde/hammaddeguncelle.html', {'formset': formset})

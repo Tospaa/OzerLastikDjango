@@ -1,0 +1,43 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Hammadde Rapor{% endblock %}
+{% block icon %}pe-7s-paint-bucket icon-gradient bg-amy-crisp{% endblock %}
+{% block pagetitle %}Hammadde Rapor{% endblock %}
+{% block pagesubtitle %}Gün Bazlı Stok dataları{% endblock %}
+{% block content %}
+<div class="main-card mb-3 card">
+    <div class="card-body">
+        <h5 class="card-title">Gün Bazlı Stok dataları</h5>
+        <form method="POST">{% csrf_token %}{{ form }}<button type="submit" class="btn btn-primary">Ara</button></form>
+        {% if data %}
+        <table class="mb-0 table table-hover">
+            <thead>
+                <tr>
+                    <th>Modeller</th>
+                    <th>Tarih: {{ data.tarih|date:'j/n/Y' }}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for field in data.fields %}
+                <tr>
+                    <th colspan="2" style="text-align:center;">{{ field.0 }}</th>
+                </tr>
+                {% for product in field.1 %}
+                <tr>
+                    <th>{{ product.0 }}</th>
+                    <td>{{ product.1 }}</td>
+                </tr>
+            {% endfor %}{% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block extrascript %}
+<script type="text/javascript">
+$(document).ready(function(event) {
+    $('#id_gun').attr('type','date')
+});
+</script>
+{% endblock %}
