@@ -19,90 +19,16 @@
                 </tr>
             </thead>
             <tbody>
+            {% for field in data.fields %}
                 <tr>
-                    <th>Krep Kısa Konç</th>
-                    <td>{{ data.KrepKisaKonc|ksdpackonly }}</td>
+                    <th colspan="2" style="text-align:center;">{{ field.0 }}</th>
                 </tr>
+                {% for product in field.1 %}
                 <tr>
-                    <th>Krep Uzun Konç</th>
-                    <td>{{ data.KrepUzunKonc|ksdpackonly }}</td>
+                    <th>{{ product.0 }}</th>
+                    <td>{{ product.1|ksdpackonly }}</td>
                 </tr>
-                <tr>
-                    <th>Krep Garson Kısa</th>
-                    <td>{{ data.KrepGarsonKisa|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Krep Garson Uzun</th>
-                    <td>{{ data.KrepGarsonUzun|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Krep Kahve Bot</th>
-                    <td>{{ data.KrepKahveBot|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Krep Siyah Bot</th>
-                    <td>{{ data.KrepSiyahBot|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Krep Çelik Burunlu Çizme</th>
-                    <td>{{ data.KrepCelikBurunluCizme|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Kasık Çizme</th>
-                    <td>{{ data.KasikCizme|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Filet Bezli</th>
-                    <td>{{ data.FiletBezli|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Zenne Bezli</th>
-                    <td>{{ data.ZenneBezli|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Merdane Bezli</th>
-                    <td>{{ data.MerdaneBezli|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Merdane Fanilalı</th>
-                    <td>{{ data.MerdaneFanilali|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Zenne İskarpin</th>
-                    <td>{{ data.ZenneIskarpin|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Merdane İskarpin</th>
-                    <td>{{ data.MerdaneIskarpin|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Garson İskarpin</th>
-                    <td>{{ data.GarsonIskarpin|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Pres Çizme OB</th>
-                    <td>{{ data.PresCizmeOB|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Pres Çizme S4</th>
-                    <td>{{ data.PresCizmeS4|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Pres Çizme S5</th>
-                    <td>{{ data.PresCizmeS5|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Elektrikçi OB</th>
-                    <td>{{ data.ElektrikciOB|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Elektrikçi S4</th>
-                    <td>{{ data.ElektrikciS4|ksdpackonly }}</td>
-                </tr>
-                <tr>
-                    <th>Elektrikçi S5</th>
-                    <td>{{ data.ElektrikciS5|ksdpackonly }}</td>
-                </tr>
+            {% endfor %}{% endfor %}
             </tbody>
         </table>
         {% endif %}

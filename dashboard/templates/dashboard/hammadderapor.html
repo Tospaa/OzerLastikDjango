@@ -6,5 +6,64 @@
 {% block pagetitle %}Hammadde Rapor{% endblock %}
 {% block pagesubtitle %}Hammadde Rapor{% endblock %}
 {% block content %}
-
+<div class="row">
+    <div class="col-lg-6">
+        <div class="main-card mb-3 card">
+            <div class="card-body">
+                <h5 class="card-title">Hammadde Giriş Çıkışları</h5>
+                <table class="mb-0 table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Madde</th>
+                            <th>Miktar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for degisiklik in ham_son_degisiklikler %}
+                        <tr>
+                            <th scope="row">{{ degisiklik.tarih|date:'j/n/Y G:i' }}</th>
+                            <td>{{ degisiklik.get_madde_display }}</td>
+                            <td>{{ degisiklik.miktar }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'dashboard:hammadderapor' %}?istek=deg_tumu">Tümünü gör</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="main-card mb-3 card">
+            <div class="card-body">
+                <h5 class="card-title">Hammadde Stok Durumu</h5>
+                <table class="mb-0 table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Maddeler</th>
+                            <th>Tarih: {{ durum.tarih|date:'j/n/Y' }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for field in durum.fields %}
+                        <tr>
+                            <th colspan="2" style="text-align:center;">{{ field.0 }}</th>
+                        </tr>
+                        {% for material in field.1 %}
+                        <tr>
+                            <th>{{ material.0 }}</th>
+                            <td>{{ material.1 }}</td>
+                        </tr>
+                    {% endfor %}{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'dashboard:hammadderapor' %}?istek=son_tumu">Geçmiş bir gün için stok durumu sorgula</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

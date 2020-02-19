@@ -1,18 +1,21 @@
-import api.models
-import pickle
 import os
+import pickle
+
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import IntegrityError
-from django.shortcuts import render, redirect
-from .models import AccountFormU, AccountFormP
+from django.shortcuts import redirect, render
+
+import api.models
+import dashboard.serializers
 from tsp_prj.settings import BASE_DIR
 
+from .models import AccountFormP, AccountFormU
+
+
 # NoAuth sayfalar:
-
-
 def iletisim(request):
     return render(request, 'dashboard/iletisim.html')
 
@@ -82,7 +85,8 @@ def kolieklecikar(request):
 def kolirapor(request):
     if 'istek' in request.GET.keys():
         if request.GET['istek'] == 'deg_tumu':
-            data = api.models.KoliDegisiklik.objects.select_related('kullanici').order_by('-id')
+            data = api.models.KoliDegisiklik.objects.select_related(
+                'kullanici').order_by('-id')
             return render(request, 'dashboard/kolirapor_degtumu.html', {'data': data})
         elif request.GET['istek'] == 'son_tumu':
             data = None
@@ -90,9 +94,11 @@ def kolirapor(request):
                 form = api.models.GunGetirForm(request.POST)
                 if form.is_valid():
                     try:
-                        data = api.models.KoliSonDurum.objects.get(tarih=form.cleaned_data['gun'])
+                        data = dashboard.serializers.SingleRecordSerializer(
+                            api.models.KoliSonDurum.objects.get(tarih=form.cleaned_data['gun']))
                     except api.models.KoliSonDurum.DoesNotExist:
-                        messages.add_message(request, messages.ERROR, 'Girilen güne ait veri bulunamadı.')
+                        messages.add_message(
+                            request, messages.ERROR, 'Girilen güne ait veri bulunamadı.')
             elif request.method == 'GET':
                 form = api.models.GunGetirForm()
             return render(request, 'dashboard/kolirapor_sontumu.html', {'form': form, 'data': data})
@@ -100,8 +106,13 @@ def kolirapor(request):
         pass
     elif 'detay' in request.GET.keys():
         pass
-    koli_son_degisiklikler = api.models.KoliDegisiklik.objects.order_by('-id')[:10]
-    koli_son_durum_ = api.models.KoliSonDurum.objects.latest('tarih')
+    # from: https://books.agiliq.com/projects/django-orm-cookbook/en/latest/select_some_fields.html
+    # The only difference between 'only' and 'values' is 'only' also fetches the id
+    # guess what: if you don't use 'only', get_mamul_model_display won't work. yeah, just try to live with that.
+    koli_son_degisiklikler = api.models.KoliDegisiklik.objects.order_by(
+        '-id').only('tarih', 'mamul_model', 'koli_turu', 'koli_adet')[:10]
+    koli_son_durum_ = dashboard.serializers.SingleRecordSerializer(
+        api.models.KoliSonDurum.objects.latest('tarih'))
     return render(request, 'dashboard/kolirapor.html', {'koli_son_degisiklikler': koli_son_degisiklikler, 'durum': koli_son_durum_})
 
 
@@ -160,8 +171,11 @@ def hammaddeeklecikar(request):
 
 @login_required
 def hammadderapor(request):
-    # TODO: Implement this.
-    return render(request, 'dashboard/hammadderapor.html')
+    ham_son_degisiklikler = api.models.HammaddeDegisiklik.objects.order_by(
+        '-id').only('tarih', 'madde', 'miktar')[:10]
+    ham_son_durum = dashboard.serializers.SingleRecordSerializer(
+        api.models.HammaddeSonDurum.objects.latest('tarih'))
+    return render(request, 'dashboard/hammadderapor.html', {'ham_son_degisiklikler': ham_son_degisiklikler, 'durum': ham_son_durum})
 
 
 @login_required

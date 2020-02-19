@@ -321,8 +321,6 @@ class HammaddeDegisiklik(models.Model):
 
 # from: https://stackoverflow.com/a/20573612
 # apply the 'form-control' css class to all model fields.
-
-
 class MyModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(MyModelForm, self).__init__(*args, **kwargs)
