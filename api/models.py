@@ -486,7 +486,7 @@ def create_update_kolisondurum_from_kolidegisiklik(sender, instance, **kwargs):
         selected_record.save()
     except KoliSonDurum.DoesNotExist:
         # Veritabanında hiç koli son durum girdisi yok demektir. Bu kısım, ideal olarak, sadece bir kez çalışacak.
-        first_record = KoliSonDurum(tarih=timezone.now().date())
+        first_record = KoliSonDurum(tarih=timezone.localtime(timezone.now()).date())
         # Girilen veriler, stokta negatif malzemenin oluşmasına izin vermemeli.
         if instance.koli_adet < 0:
             raise IntegrityError
@@ -513,6 +513,24 @@ def create_update_hammaddesondurum_from_hammaddedegisiklik(sender, instance, **k
             new_record.save()
     except HammaddeSonDurum.DoesNotExist:
         # Veritabanında hiç hammadde son durum girdisi yok demektir. Bu kısım, ideal olarak, sadece bir kez çalışacak.
-        first_record = HammaddeSonDurum(tarih=timezone.now().date())
+        first_record = HammaddeSonDurum(tarih=timezone.localtime(timezone.now()).date())
         vars(first_record)[instance.madde] = instance.miktar
         first_record.save()
+
+
+@receiver(models.signals.pre_delete, sender=KoliDegisiklik)
+def delete_kolisondurum_from_kolidegisiklik(sender, instance, **kwargs):
+    raise NotImplementedError(
+        'Delete feature has not been implemented for the Koli Son Durum objects.')
+
+
+@receiver(models.signals.pre_delete, sender=HammaddeDegisiklik)
+def delete_hammaddesondurum_from_hammaddedegisiklik(sender, instance, **kwargs):
+    if timezone.localtime(instance.tarih).date() == timezone.localtime(timezone.now()).date():
+        record = HammaddeSonDurum.objects.get(tarih=timezone.localtime(timezone.now()).date())
+        vars(record)[instance.madde] -= instance.miktar
+        record.save()
+        # TODO: If no HammaddeDegisiklik record left for that day, delete HammaddeSonDurum record for that day.
+    else:
+        raise IntegrityError(
+            'You can\'t delete a HammaddeDegisiklik object from another day.')

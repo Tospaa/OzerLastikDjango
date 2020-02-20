@@ -12,7 +12,7 @@ def SingleRecordSerializer(instance):
     elif type(instance) == api.models.KoliSonDurum:
         iterator = api.models.KoliDegisiklik.MAMUL_SECENEKLERI
     else:
-        raise TypeError("Type of the given instance ({}) is not appropriate.".format(type(instance).__name__))
+        raise TypeError("Type of the given instance ('{}') is not appropriate.".format(type(instance).__name__))
 
     for i in iterator:
         values = ()

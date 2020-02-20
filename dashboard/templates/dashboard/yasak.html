@@ -1,0 +1,14 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load dashboard_filters %}
+{% block title %}Yasak{% endblock %}
+{% block icon %}pe-7s-shield icon-gradient bg-love-kiss{% endblock %}
+{% block pagetitle %}Yasak{% endblock %}
+{% block pagesubtitle %}Bu sayfayı görme yetkiniz bulunmamaktadır.{% endblock %}
+{% block content %}
+<div class="mb-3 card card-body card-shadow-danger border border-danger" style="margin-left:150px;margin-right:150px;">
+    <h5 class="card-title">Yasak</h5>
+    <span style="margin:20px;">Bu sayfayı görme yetkiniz bulunmamaktadır.</span>
+    <button class="btn btn-outline-focus" onclick="window.location.href = '{% url "dashboard:anasayfa" %}';">Anasayfaya Dön</button>
+</div>
+{% endblock %}

@@ -13,6 +13,7 @@ import dashboard.serializers
 from tsp_prj.settings import BASE_DIR
 
 from .models import AccountFormP, AccountFormU
+from .decorators import group_required
 
 
 # NoAuth sayfalar:
@@ -58,6 +59,7 @@ def hesap(request):
 
 
 @login_required
+@group_required('editor')
 def kolieklecikar(request):
     son_on = api.models.KoliDegisiklik.objects.select_related(
         'kullanici__profile').order_by('-id')[:10]
@@ -117,6 +119,7 @@ def kolirapor(request):
 
 
 @login_required
+@group_required('editor')
 def koliguncelle(request):
     api.models.KoliRestockFormset = forms.formset_factory(
         api.models.KoliRestockForm)
@@ -147,6 +150,7 @@ def koliguncelle(request):
 
 
 @login_required
+@group_required('editor')
 def hammaddeeklecikar(request):
     son_on = api.models.HammaddeDegisiklik.objects.select_related(
         'kullanici__profile').order_by('-id')[:10]
@@ -198,6 +202,7 @@ def hammadderapor(request):
 
 
 @login_required
+@group_required('editor')
 def hammaddeguncelle(request):
     api.models.HammaddeRestockFormset = forms.formset_factory(
         api.models.HammaddeRestockForm)
@@ -223,3 +228,7 @@ def hammaddeguncelle(request):
     elif request.method == 'GET':
         formset = api.models.HammaddeRestockFormset()
     return render(request, 'dashboard/hammadde/hammaddeguncelle.html', {'formset': formset})
+
+@login_required
+def yasak(request):
+    return render(request, 'dashboard/yasak.html')
