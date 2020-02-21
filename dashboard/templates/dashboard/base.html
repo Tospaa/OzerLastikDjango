@@ -374,7 +374,12 @@ $(document).ready(function(event) { {% for message in messages %}
                 title: {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}'Hata'{% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}'Başarılı'{% endif %},
                 text: '{{ message }}',
                 icon: {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}'error'{% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}'success'{% endif %},
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
                 confirmButtonText: 'Kapat'
+                {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                showConfirmButton: false,
+                timer: 1000
+                {% endif %}
             }); {% endfor %}
         });
 </script>

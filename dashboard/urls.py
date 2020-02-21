@@ -27,6 +27,7 @@ urlpatterns = [
     path('kolirapor/', views.kolirapor, name='kolirapor'),
     path('koliguncelle/', views.koliguncelle, name='koliguncelle'),
     path('hammaddeeklecikar/', views.hammaddeeklecikar, name='hammaddeeklecikar'),
+    path('hammaddeeklecikar/sil/<int:pk>', views.hammaddeeklecikar_sil, name='hammaddeeklecikar_sil'),
     path('hammadderapor/', views.hammadderapor, name='hammadderapor'),
     path('hammaddeguncelle/', views.hammaddeguncelle, name='hammaddeguncelle'),
     path('yasak/', views.yasak, name='yasak'),

@@ -174,6 +174,24 @@ def hammaddeeklecikar(request):
 
 
 @login_required
+@group_required('editor')
+def hammaddeeklecikar_sil(request, pk):
+    if request.method == 'POST':
+        try:
+            delet_dis = api.models.HammaddeDegisiklik.objects.get(pk=pk)
+            delet_dis.delete()
+            messages.add_message(request, messages.SUCCESS,
+                                 'Silme işlemi başarılı.')
+        except IntegrityError:
+            messages.add_message(
+                request, messages.ERROR, 'Başka bir gün içinde yapılmış değişikliği silemezsiniz.')
+        return redirect('dashboard:hammaddeeklecikar')
+    elif request.method == 'GET':
+        record = api.models.HammaddeDegisiklik.objects.get(pk=pk)
+        return render(request, 'dashboard/hammadde/hammaddeeklecikar_sil.html', {'record': record})
+
+
+@login_required
 def hammadderapor(request):
     if 'istek' in request.GET.keys():
         if request.GET['istek'] == 'deg_tumu':

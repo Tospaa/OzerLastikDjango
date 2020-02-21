@@ -1,0 +1,71 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load dashboard_filters %}
+{% block title %}Hammadde İşlemi Sil{% endblock %}
+{% block icon %}pe-7s-trash icon-gradient bg-love-kiss{% endblock %}
+{% block pagetitle %}Hammadde İşlemi Sil{% endblock %}
+{% block pagesubtitle %}Bu sayfadan daha önce girilmiş <a href="{% url 'dashboard:hammaddeeklecikar' %}">Hammadde Ekle / Çıkar</a> işlemi silinir. Bugün içinde yapılmamış işlemleri silemezsiniz.{% endblock %}
+{% block content %}
+<div class="card mb-3 widget-content">
+    <div class="card-body">
+        <h5 class="card-title">Bu Hammadde Ekle / Çıkar İşlemini Sil</h5>
+        <div class="widget-content">
+            <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">{{ record.get_madde_display }}</div>
+                        <div class="widget-subheading">Madde</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget-content">
+            <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">{{ record.miktar }}</div>
+                        <div class="widget-subheading">Miktar</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if record.notlar %}
+        <div class="widget-content">
+            <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">{{ record.notlar }}</div>
+                        <div class="widget-subheading">Notlar</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="widget-content">
+            <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">{{ record.tarih }}</div>
+                        <div class="widget-subheading">Tarih</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget-content">
+            <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">{{ record.kullanici.get_full_name }}</div>
+                        <div class="widget-subheading">Değişikliği Yapan</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form method="POST">
+            <button class="btn btn-outline-focus ml-3 mr-2" onclick="window.location.href = '{% url "dashboard:hammaddeeklecikar" %}';" type="button">&laquo; Geri Dön</button>
+            {% csrf_token %}
+            <button class="btn btn-danger" type="submit"><i class="pe-7s-trash"></i> Sil</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
