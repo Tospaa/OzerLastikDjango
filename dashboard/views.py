@@ -84,6 +84,35 @@ def kolieklecikar(request):
 
 
 @login_required
+@group_required('editor')
+def kolieklecikar_sil(request, pk):
+    if request.method == 'POST':
+        try:
+            delet_dis = api.models.KoliDegisiklik.objects.get(pk=pk)
+            delet_dis.delete()
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                'Silme işlemi başarılı.'
+            )
+        except IntegrityError:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                'Kolideki değişiklikleri, kayıt sırasına göre, sondan başlayarak silmelisiniz. Ayrıca, başka gün içinde yapılan değişikliği silemezsiniz.'
+            )
+        return redirect('dashboard:kolieklecikar')
+    elif request.method == 'GET':
+        try:
+            record = api.models.KoliDegisiklik.objects.get(pk=pk)
+        except api.models.KoliDegisiklik.DoesNotExist:
+            messages.add_message(request, messages.ERROR,
+                                 'Böyle bir kayıt yok.')
+            return redirect('dashboard:kolieklecikar')
+        return render(request, 'dashboard/koli/kolieklecikar_sil.html', {'record': record})
+
+
+@login_required
 def kolirapor(request):
     if 'istek' in request.GET.keys():
         if request.GET['istek'] == 'deg_tumu':
@@ -187,7 +216,11 @@ def hammaddeeklecikar_sil(request, pk):
                 request, messages.ERROR, 'Başka bir gün içinde yapılmış değişikliği silemezsiniz.')
         return redirect('dashboard:hammaddeeklecikar')
     elif request.method == 'GET':
-        record = api.models.HammaddeDegisiklik.objects.get(pk=pk)
+        try:
+            record = api.models.HammaddeDegisiklik.objects.get(pk=pk)
+        except api.models.HammaddeDegisiklik.DoesNotExist:
+            messages.add_message(request, messages.ERROR, 'Böyle bir kayıt yok.')
+            return redirect('dashboard:hammaddeeklecikar')
         return render(request, 'dashboard/hammadde/hammaddeeklecikar_sil.html', {'record': record})
 
 

@@ -1,0 +1,111 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load dashboard_filters %}
+{% block title %}Koli İşlemi Sil{% endblock %}
+{% block icon %}pe-7s-trash icon-gradient bg-love-kiss{% endblock %}
+{% block pagetitle %}Koli İşlemi Sil{% endblock %}
+{% block pagesubtitle %}Bu sayfadan daha önce girilmiş <a href="{% url 'dashboard:kolieklecikar' %}">Koli Ekle / Çıkar</a> işlemi silinir. Bugün içinde yapılmamış işlemleri silemezsiniz.<br />UYARI: Koli model sisteminin çok karmaşık olmasından kaynaklı, bu kayıtları en son yapılan değişiklikten başlayarak silmeniz gerekmektedir.{% endblock %}
+{% block content %}
+<div class="card mb-3 widget-content">
+    <div class="card-body">
+        <h5 class="card-title">Bu Koli Ekle / Çıkar İşlemini Sil</h5>
+        <div class="widget-content">
+            <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">{{ record.get_mamul_model_display }}</div>
+                        <div class="widget-subheading">Model</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget-content">
+            <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">{{ record.kalite }}</div>
+                        <div class="widget-subheading">Kalite</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget-content">
+            <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">{{ record.koli_turu }}</div>
+                        <div class="widget-subheading">Numara</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget-content">
+            <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">{{ record.koli_adet }}</div>
+                        <div class="widget-subheading">Koli Adedi</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget-content">
+            <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">{{ record.kolideki_mamul_adet }}</div>
+                        <div class="widget-subheading">Kolideki Mamul Sayısı</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget-content">
+            <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">{{ record.imalat }}</div>
+                        <div class="widget-subheading">İmalat?</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if record.notlar %}
+        <div class="widget-content">
+            <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">{{ record.notlar }}</div>
+                        <div class="widget-subheading">Notlar</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="widget-content">
+            <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">{{ record.tarih }}</div>
+                        <div class="widget-subheading">Tarih</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="widget-content">
+            <div class="widget-content-outer">
+                <div class="widget-content-wrapper">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">{{ record.kullanici.get_full_name }}</div>
+                        <div class="widget-subheading">Değişikliği Yapan</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form method="POST">
+            <button class="btn btn-outline-focus ml-3 mr-2" onclick="window.location.href = '{% url "dashboard:kolieklecikar" %}';" type="button">&laquo; Geri Dön</button>
+            {% csrf_token %}
+            <button class="btn btn-danger" type="submit"><i class="pe-7s-trash"></i> Sil</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
