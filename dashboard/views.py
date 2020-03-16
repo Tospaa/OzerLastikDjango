@@ -10,7 +10,7 @@ from django.shortcuts import redirect, render
 
 import api.models
 import dashboard.serializers
-from tsp_prj.settings import BASE_DIR
+from django.conf import settings
 
 from .models import AccountFormP, AccountFormU
 from .decorators import group_required
@@ -23,7 +23,7 @@ def iletisim(request):
 
 def lisans(request):
     licenses = ''
-    with open(os.path.join(BASE_DIR, 'dashboard', 'licenses'), 'r') as f:
+    with open(os.path.join(settings.BASE_DIR, 'dashboard', 'licenses'), 'r') as f:
         licenses = f.read().replace('\n', '<br />')
     return render(request, 'dashboard/lisans.html', {'licenses': licenses})
 
