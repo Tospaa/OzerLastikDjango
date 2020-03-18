@@ -23,6 +23,7 @@ urlpatterns = [
     path('iletisim/', views.iletisim, name='iletisim'),
     path('lisans/', views.lisans, name='lisans'),
     path('hesap/', views.hesap, name='hesap'),
+    path('sifredegistir/', views.sifredegistir, name='sifredegistir'),
     path('kolieklecikar/', views.kolieklecikar, name='kolieklecikar'),
     path('kolieklecikar/sil/<int:pk>/', views.kolieklecikar_sil, name='kolieklecikar_sil'),
     path('kolirapor/', views.kolirapor, name='kolirapor'),

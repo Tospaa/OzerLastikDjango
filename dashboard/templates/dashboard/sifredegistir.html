@@ -1,0 +1,27 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Şifre Değiştir{% endblock %}
+{% block icon %}pe-7s-user icon-gradient bg-malibu-beach{% endblock %}
+{% block pagetitle %}Şifre Değiştir{% endblock %}
+{% block pagesubtitle %}Bu sayfadan şifrenizi değiştirebilirsiniz.</a>{% endblock %}
+{% block content %}
+<div class="main-card mb-3 card">
+    <div class="card-body">
+        <h5 class="card-title">Şifre Değiştir</h5>
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="position-relative row form-group">
+                <label for="{{ field.id_for_label }}" class="col-sm-2 col-form-label">{{ field.label }}</label>
+                <div class="col-sm-10">{{ field.errors }}{{ field }}</div>
+            </div>
+            {% endfor %}
+            <div class="position-relative row form-check">
+                <div class="col-sm-10 offset-sm-2">
+                    <button type="submit" class="btn btn-primary">Değiştir</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

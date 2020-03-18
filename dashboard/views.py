@@ -2,18 +2,20 @@ import os
 import pickle
 
 from django import forms
+from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.shortcuts import redirect, render
 
 import api.models
 import dashboard.serializers
-from django.conf import settings
 
-from .models import AccountFormP, AccountFormU
 from .decorators import group_required
+from .models import AccountFormP, AccountFormU
 
 
 # NoAuth sayfalar:
@@ -56,6 +58,20 @@ def hesap(request):
         formu = AccountFormU(instance=loggedin_user)
         formp = AccountFormP(instance=loggedin_user.profile)
     return render(request, 'dashboard/hesap.html', {'formu': formu, 'formp': formp})
+
+
+@login_required
+def sifredegistir(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # from: https://simpleisbetterthancomplex.com/tips/2016/08/04/django-tip-9-password-change-form.html
+            messages.add_message(request, messages.SUCCESS, 'Şifreniz başarıyla değiştirilmiştir.')
+            return redirect('dashboard:anasayfa')
+    elif request.method == 'GET':
+        form = PasswordChangeForm(request.user)
+    return render(request, 'dashboard/sifredegistir.html', {'form': form})
 
 
 @login_required
