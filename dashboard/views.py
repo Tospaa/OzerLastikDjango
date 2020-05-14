@@ -15,6 +15,7 @@ import api.models
 import dashboard.serializers
 
 from .decorators import group_required
+from .methodpack import first_class_percentage
 from .models import AccountFormP, AccountFormU
 
 
@@ -32,12 +33,22 @@ def lisans(request):
 # Auth sayfalar:
 @login_required
 def anasayfa(request):
-    return render(request, 'dashboard/anasayfa.html', {'title': 'Dashboard'})
+    gecen_ay_uretim = 0
+    birinci_kalite_oran = first_class_percentage(api.models.KoliSonDurum.objects.latest('tarih'))
+    gecen_ay_satis = 0
+    return render(request, 'dashboard/anasayfa.html', {'title': 'Dashboard',
+                                                       'gecen_ay_uretim': gecen_ay_uretim,
+                                                       'birinci_kalite_oran': birinci_kalite_oran,
+                                                       'gecen_ay_satis': gecen_ay_satis,
+                                                       })
 
 
 @login_required
 def arama(request):
-    return render(request, 'dashboard/arama.html', {'q': request.GET['q']})
+    q = ''
+    if 'q' in request.GET.keys():
+        q = request.GET['q']
+    return render(request, 'dashboard/arama.html', {'q': q})
 
 
 @login_required

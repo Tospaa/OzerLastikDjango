@@ -1,4 +1,5 @@
 import re
+import pickle
 
 """
 Here lies my static methods.
@@ -30,3 +31,26 @@ def validate_package_type(text):
         return stripped_text
     else:
         raise ValueError(f'Provided package type ({stripped_text}) is incorrect.')
+
+def first_class_percentage(instance):
+    first_class_sum = 0
+    second_class_sum = 0
+
+    for i in vars(instance).values():
+        try:
+            data = pickle.loads(i)  # if binary value is empty, raises exception EOFError
+                                    # if the value is not binary type, raises TypeError
+
+            if '1' in data.keys():
+                for j in data['1'].values():
+                    for ic_adet, koli_adet in j.items():
+                        first_class_sum+=ic_adet*koli_adet
+            if '2' in data.keys():
+                for j in data['2'].values():
+                    for ic_adet, koli_adet in j.items():
+                        second_class_sum+=ic_adet*koli_adet
+
+        except (EOFError, TypeError):
+            continue
+
+    return int((first_class_sum/(first_class_sum+second_class_sum))*100)
