@@ -1,11 +1,14 @@
 import os
+
 from django import forms
-from django.db import models
 from django.contrib.auth.models import User
 from django.core.files.images import get_image_dimensions
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
 from api.models import MyModelForm
+
 
 def avatar_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/avatar/user_<username>.<file_extension>

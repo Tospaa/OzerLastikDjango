@@ -4,13 +4,16 @@ import pickle
 
 register = template.Library()
 
+
 @register.filter(name='abs')
 def abs_filter(value):
     return abs(value)
 
+
 @register.filter(name='times')
 def carpma_filter(value, arg):
     return value*arg
+
 
 @register.filter(name='ksdpackonly')
 def koli_son_durum_binary_to_html(value):
@@ -36,3 +39,10 @@ def koli_son_durum_binary_to_html(value):
         return mark_safe(html_code)
     except EOFError:
         return ''
+
+
+@register.filter(name='humanize_int')
+def humanize_int(value):
+    groups_list = ['B', 'M', 'Mr', 'T', 'Kt', 'Kn', 'Sk', 'Sp', 'O', 'N', 'D']
+    group_class = (len(str(value))-1)//3
+    return '{0:.1f}{1}'.format(value/(1000**group_class), groups_list[group_class-1])

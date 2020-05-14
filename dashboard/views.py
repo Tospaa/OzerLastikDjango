@@ -10,12 +10,13 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.shortcuts import redirect, render
+from django.utils import timezone
 
 import api.models
 import dashboard.serializers
 
 from .decorators import group_required
-from .methodpack import first_class_percentage
+from .methodpack import first_class_percentage, last_month_production_and_sales
 from .models import AccountFormP, AccountFormU
 
 
@@ -33,9 +34,10 @@ def lisans(request):
 # Auth sayfalar:
 @login_required
 def anasayfa(request):
-    gecen_ay_uretim = 0
-    birinci_kalite_oran = first_class_percentage(api.models.KoliSonDurum.objects.latest('tarih'))
-    gecen_ay_satis = 0
+    gecen_ay_uretim, gecen_ay_satis = last_month_production_and_sales(
+        api.models.KoliDegisiklik.objects.filter(tarih__month=timezone.localtime(timezone.now()).month-1))
+    birinci_kalite_oran = first_class_percentage(
+        api.models.KoliSonDurum.objects.latest('tarih'))
     return render(request, 'dashboard/anasayfa.html', {'title': 'Dashboard',
                                                        'gecen_ay_uretim': gecen_ay_uretim,
                                                        'birinci_kalite_oran': birinci_kalite_oran,
@@ -77,8 +79,10 @@ def sifredegistir(request):
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # from: https://simpleisbetterthancomplex.com/tips/2016/08/04/django-tip-9-password-change-form.html
-            messages.add_message(request, messages.SUCCESS, 'Şifreniz başarıyla değiştirilmiştir.')
+            # from: https://simpleisbetterthancomplex.com/tips/2016/08/04/django-tip-9-password-change-form.html
+            update_session_auth_hash(request, user)
+            messages.add_message(request, messages.SUCCESS,
+                                 'Şifreniz başarıyla değiştirilmiştir.')
             return redirect('dashboard:anasayfa')
     elif request.method == 'GET':
         form = PasswordChangeForm(request.user)
@@ -246,7 +250,8 @@ def hammaddeeklecikar_sil(request, pk):
         try:
             record = api.models.HammaddeDegisiklik.objects.get(pk=pk)
         except api.models.HammaddeDegisiklik.DoesNotExist:
-            messages.add_message(request, messages.ERROR, 'Böyle bir kayıt yok.')
+            messages.add_message(request, messages.ERROR,
+                                 'Böyle bir kayıt yok.')
             return redirect('dashboard:hammaddeeklecikar')
         return render(request, 'dashboard/hammadde/hammaddeeklecikar_sil.html', {'record': record})
 
@@ -306,6 +311,7 @@ def hammaddeguncelle(request):
     elif request.method == 'GET':
         formset = api.models.HammaddeRestockFormset()
     return render(request, 'dashboard/hammadde/hammaddeguncelle.html', {'formset': formset})
+
 
 @login_required
 def yasak(request):

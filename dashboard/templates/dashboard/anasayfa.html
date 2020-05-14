@@ -1,5 +1,6 @@
 {% extends "dashboard/base.html" %}
 {% load static %}
+{% load dashboard_filters %}
 {% block title %}{{ title }}{% endblock %}
 {% block icon %}pe-7s-monitor icon-gradient bg-mean-fruit{% endblock %}
 {% block pagetitle %}{{ title }}{% endblock %}
@@ -14,7 +15,11 @@
                     <div class="widget-subheading">Geçen ay üretilen toplam ayakkabı</div>
                 </div>
                 <div class="widget-content-right">
-                    <div class="widget-numbers text-white"><span>{{ gecen_ay_uretim }}</span></div>
+                    <div class="widget-numbers text-white">
+                        <div class="widget-content-right" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ gecen_ay_uretim }}">
+                            <span>{{ gecen_ay_uretim|humanize_int }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -40,7 +45,11 @@
                     <div class="widget-subheading">Geçen ay satılan toplam ayakkabı</div>
                 </div>
                 <div class="widget-content-right">
-                    <div class="widget-numbers text-white"><span>{{ gecen_ay_satis }}</span></div>
+                    <div class="widget-numbers text-white">
+                        <div class="widget-content-right" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ gecen_ay_satis }}">
+                            <span>{{ gecen_ay_satis|humanize_int }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
