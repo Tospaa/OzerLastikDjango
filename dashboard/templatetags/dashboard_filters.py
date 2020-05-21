@@ -45,4 +45,7 @@ def koli_son_durum_binary_to_html(value):
 def humanize_int(value):
     groups_list = ['B', 'M', 'Mr', 'T', 'Kt', 'Kn', 'Sk', 'Sp', 'O', 'N', 'D']
     group_class = (len(str(value))-1)//3
+    # TODO: If this method were to be feeded with a value greater that 10^33,
+    # throws an 'out of bounds' exception, obviously. Nothing a simple try-except
+    # block couldn't solve, but who has time?
     return '{0:.1f}{1}'.format(value/(1000**group_class), groups_list[group_class-1])

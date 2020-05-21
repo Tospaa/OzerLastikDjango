@@ -1,5 +1,10 @@
-import re
 import pickle
+import re
+
+from django.utils import timezone
+
+import api
+
 
 """
 Here lies my static methods.
@@ -62,10 +67,25 @@ def first_class_percentage(instance):
         except (EOFError, TypeError):
             continue
 
-    return '{:.1f}'.format((first_class_sum/(first_class_sum+second_class_sum))*100)
+    return '{:.1f}'.format((first_class_sum/(first_class_sum+second_class_sum))*100), first_class_sum, second_class_sum
 
 
-def last_month_production_and_sales(querySet):
+def monthly_production_and_sales(month_int):
+    """
+    You feed this method with an int ranging 1-12,
+    and it gives you the production and sales data
+    of that month. Brilliant.
+    """
+    if month_int < 1 or month_int > 12:
+        raise ValueError(f'Month value ({month_int}) can\'t be out of the 1-12 range.')
+
+    year_int = timezone.localtime(timezone.now()).year
+
+    if month_int > timezone.localtime(timezone.now()).month:
+        year_int-=1
+
+    querySet = api.models.KoliDegisiklik.objects.filter(tarih__year=year_int).filter(tarih__month=month_int)
+
     last_month_production, last_month_sales = 0, 0
 
     for entry in querySet:

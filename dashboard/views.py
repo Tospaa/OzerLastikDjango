@@ -13,10 +13,10 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 
 import api.models
+import dashboard.methodpack as mp
 import dashboard.serializers
 
 from .decorators import group_required
-from .methodpack import first_class_percentage, last_month_production_and_sales
 from .models import AccountFormP, AccountFormU
 
 
@@ -34,15 +34,24 @@ def lisans(request):
 # Auth sayfalar:
 @login_required
 def anasayfa(request):
-    gecen_ay_uretim, gecen_ay_satis = last_month_production_and_sales(
-        api.models.KoliDegisiklik.objects.filter(tarih__month=timezone.localtime(timezone.now()).month-1))
-    birinci_kalite_oran = first_class_percentage(
+    data = {'title': 'Dashboard'}
+    data['birinci_kalite_oran'], data['kalite1'], data['kalite2'] = mp.first_class_percentage(
         api.models.KoliSonDurum.objects.latest('tarih'))
-    return render(request, 'dashboard/anasayfa.html', {'title': 'Dashboard',
-                                                       'gecen_ay_uretim': gecen_ay_uretim,
-                                                       'birinci_kalite_oran': birinci_kalite_oran,
-                                                       'gecen_ay_satis': gecen_ay_satis,
-                                                       })
+    # TODO: Buraları veritabanına yazdır ay ay. Çok fazla gereksiz işlemci kullanımı var buralarda.
+    aylar = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
+    tarih = timezone.localtime(timezone.now())
+    data['cizgi_grafik_veri'] = [[], [], []]
+    for i in range(6, 0, -1):
+        ay = tarih.month-i
+        yil = tarih.year
+        if ay < 1:
+            ay+=12
+            yil-=1
+        data['cizgi_grafik_veri'][0].append('{0}\'{1}'.format(aylar[ay-1], yil%100))
+        uretim, satis = mp.monthly_production_and_sales(ay)
+        data['cizgi_grafik_veri'][1].append(uretim)
+        data['cizgi_grafik_veri'][2].append(satis)
+    return render(request, 'dashboard/anasayfa.html', data)
 
 
 @login_required

@@ -16,9 +16,11 @@
                 </div>
                 <div class="widget-content-right">
                     <div class="widget-numbers text-white">
-                        <div class="widget-content-right" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ gecen_ay_uretim }}">
-                            <span>{{ gecen_ay_uretim|humanize_int }}</span>
+                        {% with uretim=cizgi_grafik_veri.1|last %}
+                        <div class="widget-content-right" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ uretim }}">
+                            <span>{{ uretim|humanize_int }}</span>
                         </div>
+                        {% endwith %}
                     </div>
                 </div>
             </div>
@@ -46,9 +48,11 @@
                 </div>
                 <div class="widget-content-right">
                     <div class="widget-numbers text-white">
-                        <div class="widget-content-right" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ gecen_ay_satis }}">
-                            <span>{{ gecen_ay_satis|humanize_int }}</span>
+                        {% with satis=cizgi_grafik_veri.2|last %}
+                        <div class="widget-content-right" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ satis }}">
+                            <span>{{ satis|humanize_int }}</span>
                         </div>
+                        {% endwith %}
                     </div>
                 </div>
             </div>
@@ -74,13 +78,8 @@
             <div class="card-header-tab card-header-tab-animation card-header">
                 <div class="card-header-title">
                     <i class="header-icon lnr-apartment icon-gradient bg-love-kiss"> </i>
-                    Sales Report
+                    Aylık Üretim
                 </div>
-                <ul class="nav">
-                    <li class="nav-item"><a href="javascript:void(0);" class="active nav-link">Last</a></li>
-                    <li class="nav-item"><a href="javascript:void(0);" class="nav-link second-tab-toggle">Current</a>
-                    </li>
-                </ul>
             </div>
             <div class="card-body">
                 <div class="tab-content">
@@ -88,7 +87,9 @@
                         <div class="card mb-3 widget-chart widget-chart2 text-left w-100">
                             <div class="widget-chat-wrapper-outer">
                                 <div class="widget-chart-wrapper widget-chart-wrapper-lg opacity-10 m-0">
-                                    <canvas id="pasta-grafik"></canvas>
+                                    <div style="height: 350px;">
+                                        <canvas id="aylik-uretim-grafik"></canvas>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -233,24 +234,11 @@
                     <i class="header-icon lnr-rocket icon-gradient bg-tempting-azure"> </i>
                     Bandwidth Reports
                 </div>
-                <div class="btn-actions-pane-right">
-                    <div class="nav">
-                        <a href="javascript:void(0);"
-                            class="border-0 btn-pill btn-wide btn-transition active btn btn-outline-alternate">Tab
-                            1</a>
-                        <a href="javascript:void(0);"
-                            class="ml-1 btn-pill btn-wide border-0 btn-transition  btn btn-outline-alternate second-tab-toggle-alt">Tab
-                            2</a>
-                    </div>
-                </div>
             </div>
             <div class="tab-content">
                 <div class="tab-pane fade active show" id="tab-eg-55">
                     <div class="widget-chart p-3">
-                        <div style="height: 350px">
-                            <canvas id="cizgi-grafik"></canvas>
-                        </div>
-                        
+                        <canvas id="pasta-grafik"></canvas>
                         <div class="widget-chart-content text-center mt-5">
                             <div class="widget-description mt-0 text-warning">
                                 <i class="fa fa-arrow-left"></i>
@@ -671,38 +659,22 @@
 {% endblock %}
 {% block extrascript %}
 <script type="text/javascript">
-var cizgi_config = {
+var aylik_uretim_config = {
     type: 'line',
     data: {
-        labels: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz'],
+        labels: {{ cizgi_grafik_veri.0|safe }},
         datasets: [{
-            label: 'İlk',
-            backgroundColor: window.chartColors.red,
-            borderColor: window.chartColors.red,
-            data: [
-                10,
-                15,
-                31,
-                33,
-                34,
-                42,
-                70
-            ],
+            label: 'Üretim',
+            backgroundColor: window.chartColors.green,
+            borderColor: window.chartColors.green,
+            data: {{ cizgi_grafik_veri.1 }},
             fill: false,
         }, {
-            label: 'İkinci',
+            label: 'Satış',
             fill: false,
             backgroundColor: window.chartColors.blue,
             borderColor: window.chartColors.blue,
-            data: [
-                1,
-                3,
-                22,
-                25,
-                48,
-                57,
-                84
-            ],
+            data: {{ cizgi_grafik_veri.2 }},
         }]
     },
     options: {
@@ -710,7 +682,7 @@ var cizgi_config = {
         maintainAspectRatio: false,
         title: {
             display: true,
-            text: 'Bişeyin Grafiği'
+            text: 'Aylık Üretim ve Satış'
         },
         tooltips: {
             mode: 'index',
@@ -725,14 +697,14 @@ var cizgi_config = {
                 display: true,
                 scaleLabel: {
                     display: true,
-                    labelString: 'Month'
+                    labelString: 'Aylar'
                 }
             }],
             yAxes: [{
                 display: true,
                 scaleLabel: {
                     display: true,
-                    labelString: 'Value'
+                    labelString: 'Değerler'
                 }
             }]
         }
@@ -744,27 +716,18 @@ var pasta_config = {
             data: {
                 datasets: [{
                     data: [
-                        14,
-                        20,
-                        28,
-                        48,
-                        32,
+                        {{ kalite1 }},
+                        {{ kalite2 }},
                     ],
                     backgroundColor: [
-                        window.chartColors.red,
-                        window.chartColors.orange,
-                        window.chartColors.yellow,
                         window.chartColors.green,
-                        window.chartColors.blue,
+                        window.chartColors.red,
                     ],
-                    label: 'Dataset 1'
+                    label: 'Kalite'
                 }],
                 labels: [
-                    '41 numara',
-                    '42 numara',
-                    '43 numara',
-                    '44 numara',
-                    '45 numara'
+                    'Birinci Kalite',
+                    'İkinci Kalite',
                 ]
             },
             options: {
@@ -775,7 +738,7 @@ var pasta_config = {
                 },
                 title: {
                     display: true,
-                    text: 'Ayakkabı Numara / Stok'
+                    text: 'Birinci / İkinci Kalite'
                 },
                 animation: {
                     animateScale: true,
@@ -785,8 +748,8 @@ var pasta_config = {
         };
 
 $(document).ready(function(event) {
-            var cizgi_ctx = document.getElementById('cizgi-grafik').getContext('2d');
-            window.cizgiGrafik = new Chart(cizgi_ctx, cizgi_config);
+            var aylik_uretim_ctx = document.getElementById('aylik-uretim-grafik').getContext('2d');
+            window.cizgiGrafik = new Chart(aylik_uretim_ctx, aylik_uretim_config);
             var pasta_ctx = document.getElementById('pasta-grafik').getContext('2d');
             window.pastaGrafik = new Chart(pasta_ctx, pasta_config);
         });
