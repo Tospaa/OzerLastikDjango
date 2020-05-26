@@ -35,8 +35,10 @@ def lisans(request):
 @login_required
 def anasayfa(request):
     data = {'title': 'Dashboard'}
-    data['birinci_kalite_oran'], data['kalite1'], data['kalite2'] = mp.first_class_percentage(
+    data['birinci_kalite_oran'], data['kalite1'], data['kalite2'], data['toplam_koli'] = mp.first_class_percentage(
         api.models.KoliSonDurum.objects.latest('tarih'))
+    data['son_bes'] = api.models.KoliDegisiklik.objects.select_related(
+        'kullanici__profile').order_by('-id')[:5]
     # TODO: Buraları veritabanına yazdır ay ay. Çok fazla gereksiz işlemci kullanımı var buralarda.
     aylar = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
     tarih = timezone.localtime(timezone.now())

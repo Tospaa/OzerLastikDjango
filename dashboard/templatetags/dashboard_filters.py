@@ -43,8 +43,13 @@ def koli_son_durum_binary_to_html(value):
 
 @register.filter(name='humanize_int')
 def humanize_int(value):
-    groups_list = ['B', 'M', 'Mr', 'T', 'Kt', 'Kn', 'Sk', 'Sp', 'O', 'N', 'D']
     group_class = (len(str(value))-1)//3
+
+    if group_class == 0:
+        # Means the value is 3 digits or less, no humanization needed.
+        return value
+
+    groups_list = ['B', 'M', 'Mr', 'T', 'Kt', 'Kn', 'Sk', 'Sp', 'O', 'N', 'D']
     # TODO: If this method were to be feeded with a value greater that 10^33,
     # throws an 'out of bounds' exception, obviously. Nothing a simple try-except
     # block couldn't solve, but who has time?

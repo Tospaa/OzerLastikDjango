@@ -50,6 +50,8 @@ def first_class_percentage(instance):
     first_class_sum = 0
     second_class_sum = 0
 
+    sum_of_packages = 0
+
     for i in vars(instance).values():
         try:
             data = pickle.loads(i)  # if binary value is empty, raises exception EOFError
@@ -59,15 +61,17 @@ def first_class_percentage(instance):
                 for j in data['1'].values():
                     for ic_adet, koli_adet in j.items():
                         first_class_sum += ic_adet*koli_adet
+                        sum_of_packages += koli_adet
             if '2' in data.keys():
                 for j in data['2'].values():
                     for ic_adet, koli_adet in j.items():
                         second_class_sum += ic_adet*koli_adet
+                        sum_of_packages += koli_adet
 
         except (EOFError, TypeError):
             continue
 
-    return '{:.1f}'.format((first_class_sum/(first_class_sum+second_class_sum))*100), first_class_sum, second_class_sum
+    return '{:.1f}'.format((first_class_sum/(first_class_sum+second_class_sum))*100), first_class_sum, second_class_sum, sum_of_packages
 
 
 def monthly_production_and_sales(month_int):
