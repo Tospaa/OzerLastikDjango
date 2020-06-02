@@ -186,6 +186,8 @@ class HammaddeSonDurum(models.Model):
     KrepAntistatikTabanAstariBez = models.PositiveIntegerField(default=0)
     AntiSkalant = models.PositiveIntegerField(default=0)
     KazanTuzu = models.PositiveIntegerField(default=0)
+    GalosKahveBez = models.PositiveIntegerField(default=0)
+    GalosDeveTuyuBez = models.PositiveIntegerField(default=0)
 
 
 class HammaddeDegisiklik(models.Model):
@@ -290,12 +292,14 @@ class HammaddeDegisiklik(models.Model):
         ),
         ('Bezler', (
             ('GalosKahveTabanAstariBez', 'Galoş Kahve Taban Astarı Bez'),
-            ('KrepBeyazBez', 'Krep Beyaz Bez'),
-            ('KrepTabanAstariBez', 'Krep Taban Astarı Bez'),
             ('GalosDeveTuyuTabanAstariBez', 'Galoş Deve Tüyü Taban Astarı Bez'),
             ('GalosPembeBez', 'Galoş Pembe Bez'),
             ('GalosFordBezi', 'Galoş Ford Bezi'),
             ('GalosPembeTabanAstariBez', 'Galoş Pembe Taban Astarı Bez'),
+            ('GalosKahveBez', 'Galoş Kahve Bez'),
+            ('GalosDeveTuyuBez', 'Galoş Deve Tüyü Bez'),
+            ('KrepBeyazBez', 'Krep Beyaz Bez'),
+            ('KrepTabanAstariBez', 'Krep Taban Astarı Bez'),
             ('KrepAntistatikTabanAstariBez',
              'Krep Antistatik Taban Astarı Bez'),
         )

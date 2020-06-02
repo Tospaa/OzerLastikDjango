@@ -42,14 +42,22 @@ def validate_package_type(text):
             f'Provided package type ({stripped_text}) is incorrect.')
 
 
-def first_class_percentage(instance):
+def koli_son_durum_iterator(instance):
     """
-    This one is used for calculating first class percentage.
+    This one is used for iterating over the given KoliSonDurum object.
     Used in home page view.
+    Used for calculating:
+    - first class percentage,
+    - first class pairs sum,
+    - second class pairs sum,
+    - sum of all packages
+    and returns values respectively.
     """
+    if type(instance) != api.models.KoliSonDurum:
+        raise ValueError("Type of instance ({}) is not appropriate for koli_son_durum_iterator method.".format(type(instance).__name__))
+
     first_class_sum = 0
     second_class_sum = 0
-
     sum_of_packages = 0
 
     for i in vars(instance).values():
@@ -74,21 +82,17 @@ def first_class_percentage(instance):
     return '{:.1f}'.format((first_class_sum/(first_class_sum+second_class_sum))*100), first_class_sum, second_class_sum, sum_of_packages
 
 
-def monthly_production_and_sales(month_int):
+def monthly_production_and_sales(month_int, year_int):
     """
     You feed this method with an int ranging 1-12,
+    and a year, of course,
     and it gives you the production and sales data
     of that month. Brilliant.
     """
     if month_int < 1 or month_int > 12:
         raise ValueError(f'Month value ({month_int}) can\'t be out of the 1-12 range.')
 
-    year_int = timezone.localtime(timezone.now()).year
-
-    if month_int > timezone.localtime(timezone.now()).month:
-        year_int-=1
-
-    querySet = api.models.KoliDegisiklik.objects.filter(tarih__year=year_int).filter(tarih__month=month_int)
+    querySet = api.models.KoliDegisiklik.objects.filter(tarih__year=year_int).filter(tarih__month=month_int).filter(imalat=True)
 
     last_month_production, last_month_sales = 0, 0
 

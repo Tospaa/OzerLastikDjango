@@ -35,7 +35,7 @@ def lisans(request):
 @login_required
 def anasayfa(request):
     data = {'title': 'Dashboard'}
-    data['birinci_kalite_oran'], data['kalite1'], data['kalite2'], data['toplam_koli'] = mp.first_class_percentage(
+    data['birinci_kalite_oran'], data['kalite1'], data['kalite2'], data['toplam_koli'] = mp.koli_son_durum_iterator(
         api.models.KoliSonDurum.objects.latest('tarih'))
     data['son_bes'] = api.models.KoliDegisiklik.objects.select_related(
         'kullanici__profile').order_by('-id')[:5]
@@ -50,7 +50,7 @@ def anasayfa(request):
             ay+=12
             yil-=1
         data['cizgi_grafik_veri'][0].append('{0}\'{1}'.format(aylar[ay-1], yil%100))
-        uretim, satis = mp.monthly_production_and_sales(ay)
+        uretim, satis = mp.monthly_production_and_sales(ay, yil)
         data['cizgi_grafik_veri'][1].append(uretim)
         data['cizgi_grafik_veri'][2].append(satis)
     return render(request, 'dashboard/anasayfa.html', data)
