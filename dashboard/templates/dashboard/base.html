@@ -24,6 +24,7 @@
     * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
     -->
     <link rel="stylesheet" type="text/css" href="{% static "dashboard/main.css" %}">
+    {% block extracss %}{% endblock %}
 </head>
 
 <body>
@@ -407,3 +408,4 @@ $(document).ready(function(event) {
 </body>
 
 </html>
+{% block modal %}{% endblock %}

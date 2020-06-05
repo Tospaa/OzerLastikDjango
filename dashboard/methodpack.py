@@ -1,7 +1,10 @@
+import os
 import pickle
 import re
 
+from django.conf import settings
 from django.utils import timezone
+from PIL import Image
 
 import api
 
@@ -105,3 +108,13 @@ def monthly_production_and_sales(month_int, year_int):
     last_month_sales *= -1
 
     return last_month_production, last_month_sales
+
+
+def profile_photo_resizer(rel_photo_addr, crop_box):
+    """
+    This method resizes the provided photo to
+    the standard size, which is 128x128. This
+    standard is set by me.
+    """
+    photo_addr = os.path.join(settings.MEDIA_ROOT, rel_photo_addr)
+    Image.open(photo_addr).crop(crop_box).resize((128, 128), Image.BICUBIC).save(photo_addr)

@@ -8,6 +8,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import IntegrityError
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -73,7 +74,12 @@ def hesap(request):
                              instance=loggedin_user.profile)
         if formu.is_valid() and formp.is_valid():
             formu.save()
-            formp.save()
+            profile_obj = formp.save()
+            if bool(formp.cleaned_data['photo']) and type(formp.cleaned_data['photo']) == InMemoryUploadedFile:
+                # Yeni fotoğraf yüklenmiş demektir.
+                # print(request.POST['croppieData'])
+                croppieData = tuple(map(int, request.POST['croppieData'].split(',')))
+                mp.profile_photo_resizer(profile_obj.photo.name, croppieData)
             messages.add_message(request, messages.SUCCESS,
                                  'Hesap bilgileriniz başarıyla kaydedilmiştir.')
             # from: https://groups.google.com/forum/#!topic/django-users/SLw6SrIC8wI

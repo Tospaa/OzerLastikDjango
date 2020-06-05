@@ -2,6 +2,7 @@
 {% load static %}
 {% block title %}Hesap Ayarları{% endblock %}
 {% block icon %}pe-7s-user icon-gradient bg-malibu-beach{% endblock %}
+{% block extracss %}<link rel="stylesheet" type="text/css" href="{% static 'dashboard/croppie.css' %}" />{% endblock %}
 {% block pagetitle %}Hesap Ayarları{% endblock %}
 {% block pagesubtitle %}Bu sayfadan bazı hesap ayarlarınızı değiştirebilirsiniz. Değiştiremediğiniz alanları değiştirmek için lütfen <a href="{% url 'dashboard:iletisim' %}">sistem yöneticisiyle iletişime geçin.</a>{% endblock %}
 {% block content %}
@@ -19,9 +20,13 @@
             {% for field in formp %}
             <div class="position-relative row form-group">
                 <label for="{{ field.id_for_label }}" class="col-sm-2 col-form-label">{{ field.label }}</label>
-                <div class="col-sm-10">{{ field }}</div>
+                <div class="col-sm-10">{{ field.errors }}{{ field }}</div>
             </div>
             {% endfor %}
+            <div id="croppieWrapper" class="d-none">
+                <div id="croppieHere"></div>
+            </div>
+            <input type="hidden" name="croppieData" id="croppieData" value="">
             <div class="position-relative row form-check">
                 <div class="col-sm-10 offset-sm-2">
                     <button type="submit" class="btn btn-primary">Kaydet</button>
@@ -30,4 +35,55 @@
         </form>
     </div>
 </div>
+{% endblock %}
+{% block extrascript %}
+    <script type="text/javascript" src="{% static 'dashboard/scripts/croppie.js' %}"></script>
+    <script type="text/javascript">
+        function croppieComplete() {
+            alert('Croppie Completed!!!');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var uploadCrop = new Croppie(document.getElementById('croppieHere'), {
+                viewport: {
+                    width: 128,
+                    height: 128,
+                    type: 'circle'
+                },
+                boundary: {
+                    width: 200,
+                    height: 200
+                },
+                showZoomer: false,
+            });
+
+            document.getElementById('croppieHere').addEventListener('update', function(ev) {
+                console.log(ev.detail.points);
+                document.getElementById('croppieData').value = ev.detail.points;
+            });
+
+            function readFile(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        uploadCrop.bind({
+                            url: e.target.result
+                        }).then(function(){
+                            console.log('jQuery bind complete');
+                        });
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+                else {
+                    alert("Sorry - your browser doesn't support the FileReader API");
+                }
+            }
+
+            document.getElementById('id_photo').addEventListener('change', function() {
+                readFile(this);
+                document.getElementById('croppieWrapper').className = "d-block";
+            });
+        });
+    </script>
 {% endblock %}
