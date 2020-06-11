@@ -5,6 +5,9 @@
 {% block icon %}pe-7s-paint-bucket icon-gradient bg-amy-crisp{% endblock %}
 {% block pagetitle %}Hammadde Stok Güncelle{% endblock %}
 {% block pagesubtitle %}Bu sayfadan hammadde stoğu güncellemesi yapılır. Buraya gireceğiniz veriler stoktaki son durumu temsil eder. Ekleme veya çıkarma yapmak için lütfen <a href="{% url 'dashboard:hammaddeeklecikar' %}">Hammadde Ekle / Çıkar</a> sayfasından işlem yapın.{% endblock %}
+{% block extracss %}
+<link rel="stylesheet" href="{% static 'dashboard/chosen.css' %}">
+{% endblock %}
 {% block content %}
 <div class="mb-3 card">
     <div class="card-body">
@@ -46,6 +49,8 @@
 </div>
 {% endblock %}
 {% block extrascript %}
+<script src="{% static 'dashboard/scripts/chosen.jquery.js' %}" type="text/javascript"></script>
+<script src="{% static 'dashboard/scripts/chosen.init.js' %}" type="text/javascript"></script>
 <script type="text/javascript">
 // from: https://simpleit.rocks/python/django/dynamic-add-form-with-add-button-in-django-modelformset-template/
 $('#addmore').click(function() {
@@ -58,6 +63,10 @@ $('#addmore').click(function() {
         </tr>`;
 	$('#formlar').append(new_form_html.replace(/__prefix__/g, form_idx));
 	$('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+
+    for (var selector in config) {
+        $(selector).chosen(config[selector]);
+    }
 });
 
 $('#deleterow').click(function() {

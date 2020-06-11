@@ -331,14 +331,16 @@ class MyModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(MyModelForm, self).__init__(*args, **kwargs)
         for _, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
+            if 'class' not in field.widget.attrs:
+                field.widget.attrs['class'] = 'form-control'
 
 
 class MyForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(MyForm, self).__init__(*args, **kwargs)
         for _, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
+            if 'class' not in field.widget.attrs:
+                field.widget.attrs['class'] = 'form-control'
 
 
 class KoliDegisiklikForm(MyModelForm):
@@ -349,6 +351,10 @@ class KoliDegisiklikForm(MyModelForm):
         except ValueError:
             raise forms.ValidationError(f'Girilen numara değeri ({data}) formata uygun değil.')
         return data
+
+    def __init__(self, *args, **kwargs):
+        super(KoliDegisiklikForm, self).__init__(*args, **kwargs)
+        self.fields['mamul_model'].widget.attrs['class'] = 'form-control chosen-select-no-results'
 
     class Meta:
         model = KoliDegisiklik
@@ -367,6 +373,10 @@ class KoliDegisiklikForm(MyModelForm):
 
 
 class HammaddeDegisiklikForm(MyModelForm):
+    def __init__(self, *args, **kwargs):
+        super(HammaddeDegisiklikForm, self).__init__(*args, **kwargs)
+        self.fields['madde'].widget.attrs['class'] = 'form-control chosen-select-no-results'
+
     class Meta:
         model = HammaddeDegisiklik
         exclude = ('kullanici',)
@@ -385,7 +395,8 @@ class KoliRestockForm(MyForm):
         min_value=0, label='Kolideki Mamül Sayısı')
 
     mamul_model.widget.attrs.update(
-        {'onchange': 'kolidekiMamulSayisiGuncelle(event)'})
+        {'onchange': 'kolidekiMamulSayisiGuncelle(event)',
+         'class': 'form-control chosen-select-width'})
     koli_turu.widget.attrs.update(
         {'pattern': r'^[1-9][0-9]?(?:/[1-9][0-9]?)?$'})
     kolideki_mamul_adet.widget.attrs.update(
@@ -395,6 +406,8 @@ class KoliRestockForm(MyForm):
 class HammaddeRestockForm(MyForm):
     madde = forms.ChoiceField(choices=HammaddeDegisiklik.HAMMADDE_SECENEKLERI)
     miktar = forms.IntegerField(min_value=0)
+
+    madde.widget.attrs.update({'class': 'form-control chosen-select-width'})
 
 
 class GunGetirForm(forms.Form):
