@@ -6,7 +6,7 @@ from django.db import IntegrityError, models
 from django.dispatch import receiver
 from django.utils import timezone
 
-from dashboard.methodpack import sorting_key
+from dashboard.methodpack import sorting_key, validate_package_type
 
 # Mamuller:
 
@@ -342,6 +342,14 @@ class MyForm(forms.Form):
 
 
 class KoliDegisiklikForm(MyModelForm):
+    def clean_koli_turu(self):
+        data = self.cleaned_data['koli_turu']
+        try:
+            data = validate_package_type(data)
+        except ValueError:
+            raise forms.ValidationError(f'Girilen numara değeri ({data}) formata uygun değil.')
+        return data
+
     class Meta:
         model = KoliDegisiklik
         exclude = ('kullanici',)

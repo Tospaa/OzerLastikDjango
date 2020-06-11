@@ -39,10 +39,6 @@
 {% block extrascript %}
     <script type="text/javascript" src="{% static 'dashboard/scripts/croppie.js' %}"></script>
     <script type="text/javascript">
-        function croppieComplete() {
-            alert('Croppie Completed!!!');
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
             var uploadCrop = new Croppie(document.getElementById('croppieHere'), {
                 viewport: {
@@ -58,7 +54,6 @@
             });
 
             document.getElementById('croppieHere').addEventListener('update', function(ev) {
-                console.log(ev.detail.points);
                 document.getElementById('croppieData').value = ev.detail.points;
             });
 
