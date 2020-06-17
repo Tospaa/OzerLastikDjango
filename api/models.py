@@ -578,8 +578,6 @@ def delete_kolisondurum_from_kolidegisiklik(sender, instance, **kwargs):
         else:
             vars(record)[instance.mamul_model] = pickle.dumps({instance.kalite: {instance.koli_turu: {instance.kolideki_mamul_adet: instance.koli_adet * -1}}})
         record.save()
-        else:
-
     else:
         raise IntegrityError(
             'You can\'t delete a KoliDegisiklik object from another day, nor other than the latest record.')
