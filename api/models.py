@@ -555,26 +555,31 @@ def delete_kolisondurum_from_kolidegisiklik(sender, instance, **kwargs):
         if KoliDegisiklik.objects.filter(tarih__date=timezone.now().date()).count() == 1:
             record.delete()
             return
-        raw_data = pickle.loads(vars(record)[instance.mamul_model])
-        if instance.koli_turu in raw_data[instance.kalite]:
-            if instance.kolideki_mamul_adet in raw_data[instance.kalite][instance.koli_turu]:
-                raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet] -= instance.koli_adet
-                if raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet] == 0:
-                    del raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet]
-                if not raw_data[instance.kalite][instance.koli_turu]:
-                    del raw_data[instance.kalite][instance.koli_turu]
-                if not raw_data[instance.kalite]:
-                    del raw_data[instance.kalite]
-                if not raw_data:
-                    vars(record)[instance.mamul_model] = b''
+        if vars(record)[instance.mamul_model] != b'':
+            raw_data = pickle.loads(vars(record)[instance.mamul_model])
+            if instance.koli_turu in raw_data[instance.kalite]:
+                if instance.kolideki_mamul_adet in raw_data[instance.kalite][instance.koli_turu]:
+                    raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet] -= instance.koli_adet
+                    if raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet] == 0:
+                        del raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet]
+                    if not raw_data[instance.kalite][instance.koli_turu]:
+                        del raw_data[instance.kalite][instance.koli_turu]
+                    if not raw_data[instance.kalite]:
+                        del raw_data[instance.kalite]
+                    if not raw_data:
+                        vars(record)[instance.mamul_model] = b''
+                    else:
+                        vars(record)[instance.mamul_model] = pickle.dumps(raw_data)
                 else:
-                    vars(record)[instance.mamul_model] = pickle.dumps(raw_data)
+                    raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet] = instance.koli_adet * -1
             else:
-                raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet] = instance.koli_adet * -1
+                raw_data[instance.kalite][instance.koli_turu] = {instance.kolideki_mamul_adet: instance.koli_adet * -1}
+                vars(record)[instance.mamul_model] = pickle.dumps(raw_data)
         else:
-            raw_data[instance.kalite][instance.koli_turu] = {instance.kolideki_mamul_adet: instance.koli_adet * -1}
-            vars(record)[instance.mamul_model] = pickle.dumps(raw_data)
+            vars(record)[instance.mamul_model] = pickle.dumps({instance.kalite: {instance.koli_turu: {instance.kolideki_mamul_adet: instance.koli_adet * -1}}})
         record.save()
+        else:
+
     else:
         raise IntegrityError(
             'You can\'t delete a KoliDegisiklik object from another day, nor other than the latest record.')
