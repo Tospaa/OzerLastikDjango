@@ -556,16 +556,23 @@ def delete_kolisondurum_from_kolidegisiklik(sender, instance, **kwargs):
             record.delete()
             return
         raw_data = pickle.loads(vars(record)[instance.mamul_model])
-        raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet] -= instance.koli_adet
-        if raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet] == 0:
-            del raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet]
-        if not raw_data[instance.kalite][instance.koli_turu]:
-            del raw_data[instance.kalite][instance.koli_turu]
-        if not raw_data[instance.kalite]:
-            del raw_data[instance.kalite]
-        if not raw_data:
-            vars(record)[instance.mamul_model] = b''
+        if instance.koli_turu in raw_data[instance.kalite]:
+            if instance.kolideki_mamul_adet in raw_data[instance.kalite][instance.koli_turu]:
+                raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet] -= instance.koli_adet
+                if raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet] == 0:
+                    del raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet]
+                if not raw_data[instance.kalite][instance.koli_turu]:
+                    del raw_data[instance.kalite][instance.koli_turu]
+                if not raw_data[instance.kalite]:
+                    del raw_data[instance.kalite]
+                if not raw_data:
+                    vars(record)[instance.mamul_model] = b''
+                else:
+                    vars(record)[instance.mamul_model] = pickle.dumps(raw_data)
+            else:
+                raw_data[instance.kalite][instance.koli_turu][instance.kolideki_mamul_adet] = instance.koli_adet * -1
         else:
+            raw_data[instance.kalite][instance.koli_turu] = {instance.kolideki_mamul_adet: instance.koli_adet * -1}
             vars(record)[instance.mamul_model] = pickle.dumps(raw_data)
         record.save()
     else:
