@@ -338,6 +338,13 @@
             }
         }
 
+        document.addEventListener("DOMContentLoaded", function() {
+            var e,t=[document.title,"#EvdeKal"];
+            document.addEventListener("visibilitychange",function(){
+                document.hidden?e=setInterval(function(){document.title=document.title===t[0]?t[1]:t[0]},1e3):(document.title=t[0],clearInterval(e))
+            });
+        });
+
         {% comment %} $(document).ready(function() {
             var items = ["bg-warm-flame",
                 "bg-night-fade",
@@ -388,20 +395,20 @@ $(document).ready(function(event) { {% for message in messages %}
 </script>
 {% else %}
 <script type="text/javascript">
-$(document).ready(function(event) {
-            Swal.mixin({
-                confirmButtonText: 'Kapat',
-                showCancelButton: false,
-                progressSteps: [...Array({{ messages|length }}+1).keys()].slice(1).map(String)
-            }).queue([
-                {% for message in messages %}{
-                    title: {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}'Hata'{% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}'Başarılı'{% endif %},
-                    text: '{{ message }}',
-                    icon: {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}'error'{% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}'success'{% endif %}
-                },
-                {% endfor %}
-            ]);
-        });
+    $(document).ready(function(event) {
+        Swal.mixin({
+            confirmButtonText: 'Kapat',
+            showCancelButton: false,
+            progressSteps: [...Array({{ messages|length }}+1).keys()].slice(1).map(String)
+        }).queue([
+            {% for message in messages %}{
+                title: {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}'Hata'{% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}'Başarılı'{% endif %},
+                text: '{{ message }}',
+                icon: {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}'error'{% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}'success'{% endif %}
+            },
+            {% endfor %}
+        ]);
+    });
 </script>
 {% endif %}
 {% endif %}
