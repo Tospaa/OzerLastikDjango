@@ -55,7 +55,7 @@
                         </tr>
                         {% for material in field.1 %}
                         <tr>
-                            <th>{{ material.0 }}</th>
+                            <th><a href="{% url 'dashboard:kolirapor_tek_detay' material.2 %}">{{ material.0 }}</a></th>
                             <td>{{ material.1|ksdpackonly }}</td>
                         </tr>
                     {% endfor %}{% endfor %}

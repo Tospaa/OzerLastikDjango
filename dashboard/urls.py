@@ -28,6 +28,7 @@ urlpatterns = [
     path('koli/sil/<int:pk>/', views.kolieklecikar_sil, name='kolieklecikar_sil'),
     path('koli/', views.kolirapor, name='kolirapor'),
     path('koli/guncelle/', views.koliguncelle, name='koliguncelle'),
+    path('koli/detay/<str:urun>', views.kolirapor_tek_detay, name='kolirapor_tek_detay'),
     path('hammadde/eklecikar/', views.hammaddeeklecikar, name='hammaddeeklecikar'),
     path('hammadde/sil/<int:pk>/', views.hammaddeeklecikar_sil, name='hammaddeeklecikar_sil'),
     path('hammadde/', views.hammadderapor, name='hammadderapor'),

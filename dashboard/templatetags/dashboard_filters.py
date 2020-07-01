@@ -54,3 +54,13 @@ def humanize_int(value):
     # throws an 'out of bounds' exception, obviously. Nothing a simple try-except
     # block couldn't solve, but who has time?
     return '{0:.1f}{1}'.format(value/(1000**group_class), groups_list[group_class-1])
+
+
+@register.filter(name='bool_to_turkish')
+def bool_to_turkish(value):
+    if not type(value) == bool:
+        raise TypeError('Provided value is not bool type, instead {} type.'.format(type(value).__name__))
+    if value:
+        return 'Evet'
+    else:
+        return 'Hayır'

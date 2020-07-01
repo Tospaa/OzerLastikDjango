@@ -118,3 +118,15 @@ def profile_photo_resizer(rel_photo_addr, crop_box):
     """
     photo_addr = os.path.join(settings.MEDIA_ROOT, rel_photo_addr)
     Image.open(photo_addr).crop(crop_box).resize((128, 128), Image.BICUBIC).save(photo_addr)
+
+
+def find_full_name_from_choice(value, iterable_instance):
+    """
+    This method gives the full name of the given
+    choice from Django choice list.
+    """
+    for i in iterable_instance:
+        for j in i[1]:
+            if value == j[0]:
+                return j[1]
+    return None

@@ -15,7 +15,7 @@ from django.utils import timezone
 
 import api.models
 import dashboard.methodpack as mp
-import dashboard.serializers
+import dashboard.serializers as s
 
 from .decorators import group_required
 from .models import AccountFormP, AccountFormU
@@ -173,7 +173,7 @@ def kolirapor(request):
                 form = api.models.GunGetirForm(request.POST)
                 if form.is_valid():
                     try:
-                        data = dashboard.serializers.SingleRecordSerializer(
+                        data = s.SingleRecordSerializer(
                             api.models.KoliSonDurum.objects.get(tarih=form.cleaned_data['gun']))
                     except api.models.KoliSonDurum.DoesNotExist:
                         messages.add_message(
@@ -190,7 +190,7 @@ def kolirapor(request):
     # guess what: if you don't use 'only', get_mamul_model_display won't work. yeah, just try to live with that.
     koli_son_degisiklikler = api.models.KoliDegisiklik.objects.order_by(
         '-id').only('tarih', 'mamul_model', 'koli_turu', 'koli_adet')[:10]
-    koli_son_durum_ = dashboard.serializers.SingleRecordSerializer(
+    koli_son_durum_ = s.SingleRecordSerializer(
         api.models.KoliSonDurum.objects.latest('tarih'))
     return render(request, 'dashboard/koli/kolirapor.html', {'koli_son_degisiklikler': koli_son_degisiklikler, 'durum': koli_son_durum_})
 
@@ -286,7 +286,7 @@ def hammadderapor(request):
                 form = api.models.GunGetirForm(request.POST)
                 if form.is_valid():
                     try:
-                        data = dashboard.serializers.SingleRecordSerializer(
+                        data = s.SingleRecordSerializer(
                             api.models.HammaddeSonDurum.objects.get(tarih=form.cleaned_data['gun']))
                     except api.models.HammaddeSonDurum.DoesNotExist:
                         messages.add_message(
@@ -296,7 +296,7 @@ def hammadderapor(request):
             return render(request, 'dashboard/hammadde/hammadderapor_sontumu.html', {'form': form, 'data': data})
     ham_son_degisiklikler = api.models.HammaddeDegisiklik.objects.order_by(
         '-id').only('tarih', 'madde', 'miktar')[:10]
-    ham_son_durum = dashboard.serializers.SingleRecordSerializer(
+    ham_son_durum = s.SingleRecordSerializer(
         api.models.HammaddeSonDurum.objects.latest('tarih'))
     return render(request, 'dashboard/hammadde/hammadderapor.html', {'ham_son_degisiklikler': ham_son_degisiklikler, 'durum': ham_son_durum})
 
@@ -333,3 +333,17 @@ def hammaddeguncelle(request):
 @login_required
 def yasak(request):
     return render(request, 'dashboard/yasak.html')
+
+
+@login_required
+def kolirapor_tek_detay(request, urun):
+    data = {}
+    data['urun'] = mp.find_full_name_from_choice(
+        urun, api.models.KoliDegisiklik.MAMUL_SECENEKLERI)
+    if data['urun'] is None:
+        return redirect('dashboard:kolirapor')
+    data['detaylar'] = s.KoliSonDurumSerializer(
+        vars(api.models.KoliSonDurum.objects.latest('tarih'))[urun])
+    data['son_on'] = api.models.KoliDegisiklik.objects.select_related(
+        'kullanici__profile').filter(mamul_model=urun).order_by('-id')[:10]
+    return render(request, 'dashboard/koli/kolirapor_tek_detay.html', data)

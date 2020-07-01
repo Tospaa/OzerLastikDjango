@@ -18,6 +18,7 @@
                     <th>Numara</th>
                     <th>Koli Adedi</th>
                     <th>Çift Adedi</th>
+                    <th>İmalat/Satış mı?</th>
                     <th>Notlar</th>
                     <th>Değişikliği Yapan</th>
                 </tr>
@@ -31,6 +32,7 @@
                     <td>{{ degisiklik.koli_turu }}</td>
                     <td>{{ degisiklik.koli_adet }}</td>
                     <td>{{ degisiklik.koli_adet|times:degisiklik.kolideki_mamul_adet }}</td>
+                    <td>{{ degisiklik.imalat|bool_to_turkish }}</td>
                     <td>{% if degisiklik.notlar %}
                         <div class="widget-content-right" data-toggle="tooltip" data-placement="bottom" data-original-title="{{ degisiklik.notlar }}">
                         {{ degisiklik.notlar|truncatechars:10 }}
